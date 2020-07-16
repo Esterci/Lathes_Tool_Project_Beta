@@ -1,9 +1,9 @@
-SODA_minkowski_label_3_3.50.csv
+SODA_canberra_label_3_4.75.csv
 Number of data clouds: 5
 Number of good tools groups: 2
 Number of worn tools groups: 2
 Number of excluded data clouds: 1
 Data representation loss: 0.00
-Analyse execution time: 2.021002 segundos
-Avarage CPU usage: 20.11
+Analyse execution time: 2.025201 segundos
+Avarage CPU usage: 32.27
 ---------------------------------------------------
