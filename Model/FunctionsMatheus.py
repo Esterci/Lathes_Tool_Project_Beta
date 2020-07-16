@@ -313,11 +313,7 @@ gra = np.arange(min_granularity,max_granularity,pace)
 for d in distances:
     for g in gra:
         try:
-            Classification (ClassificationPar, d, 1, g, plot_matrix=False) # (Parametros da data-set, 
-                                                                           #  distância, 
-                                                                           #  numero de vezes a classificar,
-                                                                           #  granularidade,
-                                                                           #  plotar matriz de confusão (True or False))
+            Classification (ClassificationPar, d, 1, g, plot_matrix=False) # (Parametros do data-set,  distância, numero de vezes a classificar,  granularidade,plotar matriz de confusão (True or False))
         except:
             base_path = os.path.dirname(os.path.dirname(os.path.abspath("Model_Unified_Code.ipynb")))
             os.chdir( base_path )
