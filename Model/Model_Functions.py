@@ -1415,11 +1415,12 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
             #### Program Matrix's and Variables ####
 
-            n_DA_planes = np.max(SodaOutput) + 1
+            n_DA_planes = np.max(SodaOutput)
             Percent = np.zeros((int(n_DA_planes),3))
             n_IDs_per_gp = np.zeros((int(n_DA_planes),2))
             n_tot_Id_per_DA = np.zeros((int(n_DA_planes),1))
             decision = np.zeros(int(n_DA_planes))
+            selected_samples = np.zeros(2)
             n_DA_excluded = 0
             n_excluded = 0
             n_gp0 = 0
@@ -1433,19 +1434,18 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             for i in range(SodaOutput.shape[0]):
     
                 if i < n_IDs_gp0:
-                    n_IDs_per_gp [int(SodaOutput[i]),0] += 1 
+                    n_IDs_per_gp [int(SodaOutput[i]-1),0] += 1 
                 else:
-                    n_IDs_per_gp [int(SodaOutput[i]),1] += 1 
+                    n_IDs_per_gp [int(SodaOutput[i]-1),1] += 1 
 
-                n_tot_Id_per_DA [int(SodaOutput[i])] += 1 
+                n_tot_Id_per_DA [int(SodaOutput[i]-1)] += 1 
 
 
             for i in range(int(n_DA_planes)):
     
                 Percent[i,0] = (n_IDs_per_gp[i,0] / n_tot_Id_per_DA[i]) * 100
                 Percent[i,1] = (n_IDs_per_gp[i,1] / n_tot_Id_per_DA[i]) * 100
-                Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_gp[i,1])) 
-                    / n_tot_Id_per_DA[i]) * 100
+                #Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_g[i,1])) / n_tot_Id_per_DA[i]) * 100
     
             #### Using Definition Percentage as Decision Parameter ####
 
@@ -1474,18 +1474,24 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
         
             #### Passing data of well defined DA planes to SelectedData and defining labels
 
-            SelectedData = np.zeros((int(SelectedFeatures.shape[0] - n_excluded),int(SelectedFeatures.shape[1])))
-            ClassifiersLabel = np.zeros((int(SelectedFeatures.shape[0] - n_excluded)))
+            SelectedData = np.zeros((int(SelectedFeatures.shape[0] - n_excluded),int(SelectedFeatures.shape[1])))# pylint: disable=E1136  # pylint/issues/3139
+            ClassifiersLabel = np.zeros((int(SelectedFeatures.shape[0] - n_excluded)))# pylint: disable=E1136  # pylint/issues/3139
             
             
-            for i in range (SodaOutput.shape[0]):
+            for i in range (SodaOutput.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
                 if decision[int (SodaOutput[i]-1)] != -1:
     
                     SelectedData[k] = SelectedFeatures[i]
-                    ClassifiersLabel [k] = int(not bool(decision[int(SodaOutput[i]-1)]))
-                
+                    ClassifiersLabel [k] = decision[int (SodaOutput[i]-1)]
                     if k < int(SelectedFeatures.shape[0] - n_excluded - 1):
                         k += 1
+
+            for i in range (decision.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
+
+                if decision[i] != -1:
+                    
+                    selected_samples[0] += n_IDs_per_gp[i,0]
+                    selected_samples[1] += n_IDs_per_gp[i,1]      
 
             #### Printing Processed Data, ID's and Percentage
             
@@ -1517,10 +1523,13 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             print('Number of good tools groups: %d' % n_gp0)
             print('Number of worn tools groups: %d' % n_gp1)
             print('Number of excluded data clouds: %d' % n_DA_excluded)
+            print('Number of samples: %d' % int(SodaOutput.shape[0])) # pylint: disable=E1136  # pylint/issues/3139
+            print('Number of good tools samples: %d' % int(selected_samples[0]))
+            print('Number of worn tools samples: %d' % int(selected_samples[1]))
+            print('Number of excluded samples: %d' % n_excluded)
             print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             print('Analyse execution time: %.6f segundos' % totaltime)
             print('Avarage CPU usage: %.2f' % cpu_percent)
-            #confusionmatrix(DataSetID, d, g, ClassifiersLabel, 'SODA')
             print('---------------------------------------------------')
             
             #### Saving Processed Data, ID's and Percentage
@@ -1535,7 +1544,11 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             Grouping_Analyse.write('Number of good tools groups: %d\n' % n_gp0)
             Grouping_Analyse.write('Number of worn tools groups: %d\n' % n_gp1)
             Grouping_Analyse.write('Number of excluded data clouds: %d\n' % n_DA_excluded)
-            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))# pylint: disable=E1136  # pylint/issues/3139
+            Grouping_Analyse.write('Number of samples: %d\n' % int(SodaOutput.shape[0]))
+            Grouping_Analyse.write('Number of good tools samples: %d\n' % int(selected_samples[0]))
+            Grouping_Analyse.write('Number of worn tools samples: %d\n' % int(selected_samples[1]))
+            Grouping_Analyse.write('Number of excluded samples: %d\n' % n_excluded)
+            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             Grouping_Analyse.write('Analyse execution time: %.6f segundos\n' % totaltime)
             Grouping_Analyse.write('Avarage CPU usage: %.2f\n' % cpu_percent)
             Grouping_Analyse.write('---------------------------------------------------')
