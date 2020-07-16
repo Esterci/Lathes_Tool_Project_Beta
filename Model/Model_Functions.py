@@ -39,9 +39,9 @@ import pickle
 #Recovery function 
 
 def Recovery (DataName):
-    
+
     #Changing Work Folder
-    
+
     add_path1 = "/PCA_Analyses/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
@@ -51,195 +51,237 @@ def Recovery (DataName):
     Recovery_path = base_path + add_path3
     
     if DataName == 'D_S_parameters':
-        
-        # Now change to Kernel directory
+
+        try:
+
+            # Now change to Kernel directory
     
-        os.chdir( Kernel_path )
+            os.chdir( Kernel_path )
+            
+            Final_Target = np.genfromtxt('FinalTarget.csv', delimiter = ',')
+            
+            # Now change to Recovery directory
         
-        Final_Target = np.genfromtxt('FinalTarget.csv', delimiter = ',')
+            os.chdir( Recovery_path )
+            
+            P_N_groups = int(np.load('M_N_groups.npy'))
+            Output_Id = int(np.load('ID.npy'))
+            P_N_Ids = int(np.load('N_IDs.npy'))
+            
+            # Now change to base directory
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+            os.chdir( base_path )
+            
+            Output = {'FinalTarget': Final_Target,
+                    'M_N_groups': P_N_groups,
+                    'ID': Output_Id,
+                    'N_IDs': P_N_Ids}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+            print("D_S_parameters Recovered!")
         
-        P_N_groups = int(np.load('M_N_groups.npy'))
-        Output_Id = int(np.load('ID.npy'))
-        P_N_Ids = int(np.load('N_IDs.npy'))
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'FinalTarget': Final_Target,
-                  'M_N_groups': P_N_groups,
-                  'ID': Output_Id,
-                  'N_IDs': P_N_Ids}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            return Output
+            
+        except:
+
+            print("D_S_parameters not recovered =(" + '\033[0m')
     
     elif DataName == 'ExtractedNames':
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+        try:
+
+            # Now change to Recovery directory
         
-        extracted_names = np.load('extracted_names.npy')
+            os.chdir( Recovery_path )
+            
+            extracted_names = np.load('extracted_names.npy')
+            
+            # Now change to base directory
         
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-    
-        return extracted_names
-    
+            os.chdir( base_path )
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+
+            print("ExtractedNames recovered!")
+            return extracted_names
+
+        except:
+            print('\033[93m' + "ExtractedNames not recovered =(" + '\033[0m')
+                 
     elif DataName == 'SelectedFeatures':
+
+        try:    
+            # Now change to Recovery directory
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+            os.chdir( Recovery_path )
+            
+            Output_Id = int(np.load('ID.npy'))
+            
+            # Now change to Kernel directory
         
-        Output_Id = int(np.load('ID.npy'))
+            os.chdir( Kernel_path )
+            
+            features_filtered_1 = pd.read_csv('features_filtered_' + str(Output_Id) + '.csv') 
+            
+            # Now change to base directory
         
-        # Now change to Kernel directory
-    
-        os.chdir( Kernel_path )
-        
-        features_filtered_1 = pd.read_csv('features_filtered_' + str(Output_Id) + '.csv') 
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'FeaturesFiltered': features_filtered_1,
-                  'ID': Output_Id}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            os.chdir( base_path )
+            
+            Output = {'FeaturesFiltered': features_filtered_1,
+                    'ID': Output_Id}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+
+            print("SelectedFeatures recovered!")            
+            return Output
+
+        except:
+            print('\033[93m' + "SelectedFeatures not recovered =(" + '\033[0m')
         
     elif DataName == 'ReducedFeatures':
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+        try:
+
+            # Now change to Recovery directory
         
-        Output_Id = int(np.load('ID.npy'))
+            os.chdir( Recovery_path )
+            
+            Output_Id = int(np.load('ID.npy'))
+            
+            # Now change to PCA Analyses directory
         
-        # Now change to PCA Analyses directory
-    
-        os.chdir( PCA_Analyses_path )
+            os.chdir( PCA_Analyses_path )
+            
+            features_reduzidas = np.genfromtxt("features_reduzidas_" + str(Output_Id) + ".csv", delimiter=',')
+            
+            # Now change to base directory
         
-        features_reduzidas = np.genfromtxt("features_reduzidas_" + str(Output_Id) + ".csv", delimiter=',')
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'ReducedFeatures': features_reduzidas,
-                  'ID': Output_Id}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            os.chdir( base_path )
+            
+            Output = {'ReducedFeatures': features_reduzidas,
+                    'ID': Output_Id}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+            
+            print("ReducedFeatures recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ReducedFeatures not recovered =(" + '\033[0m')
         
     elif DataName == 'SODA_parameters_processing_parameters':
         
-        # Now change to base directory
-    
-        os.chdir( Recovery_path )
+        try:
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            # Now change to base directory
         
-        Output_Id = int(np.load('ID.npy'))
-        processing_parameters = np.load(('processing_parameters.npy'), allow_pickle=True) 
-        processing_parameters = processing_parameters.tolist() 
-        distances = np.load(('distances.npy'), allow_pickle=True) 
-        distances = distances.tolist() 
-        min_granularity = np.load('Min_g.npy') 
-        max_granularity = np.load('Max_g.npy') 
-        pace = np.load('Pace.npy') 
+            os.chdir( Recovery_path )
 
-        Output = {'Distances': distances,
-                  'Min_g': min_granularity,
-                  'Max_g': max_granularity,
-                  'Pace': pace,
-                  'ID': Output_Id}
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            Output_Id = int(np.load('ID.npy'))
+            processing_parameters = np.load(('processing_parameters.npy'), allow_pickle=True) 
+            processing_parameters = processing_parameters.tolist() 
+            distances = np.load(('distances.npy'), allow_pickle=True) 
+            distances = distances.tolist() 
+            min_granularity = np.load('Min_g.npy') 
+            max_granularity = np.load('Max_g.npy') 
+            pace = np.load('Pace.npy') 
 
-        # Now change to base directory
+            Output = {'Distances': distances,
+                    'Min_g': min_granularity,
+                    'Max_g': max_granularity,
+                    'Pace': pace,
+                    'ID': Output_Id}
 
-        os.chdir( base_path ) 
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            os.chdir( base_path ) 
 
-        return Output, processing_parameters
-        
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+
+            print("SODA_parameters_processing_parameters recovered!")
+            return Output, processing_parameters
+
+        except:
+            print('\033[93m' + "SODA_parameters_processing_parameters not recovered =(" + '\033[0m')
+                
     elif DataName == 'ClassificationPar':
-        
-        # Now change to base directory
-    
-        os.chdir( Recovery_path ) 
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+        try:
         
-        Output_Id = int(np.load('ID.npy'))
-        pace = np.load("Pace.npy")
-        distances = np.load(('distances.npy'), allow_pickle=True) 
-        distances = distances.tolist() 
-        define_percent = np.load('define_percent.npy')
+            # Now change to base directory
         
-        Output = {'Percent': define_percent,
-                'Distances': distances,
-                'Pace': pace,
-                'ID': Output_Id}
-        
-        # Now change to base directory
+            os.chdir( Recovery_path ) 
 
-        os.chdir( base_path ) 
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            Output_Id = int(np.load('ID.npy'))
+            pace = np.load("Pace.npy")
+            distances = np.load(('distances.npy'), allow_pickle=True) 
+            distances = distances.tolist() 
+            define_percent = np.load('define_percent.npy')
+            
+            Output = {'Percent': define_percent,
+                    'Distances': distances,
+                    'Pace': pace,
+                    'ID': Output_Id}
+            
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
-        
-        return Output
-    
+            os.chdir( base_path ) 
+
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            print("ClassificationPar recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ClassificationPar not recovered =(" + '\033[0m')    
+
     elif DataName == 'ModelPar':
         
-        # Now change to base directory
-    
-        os.chdir( Recovery_path ) 
+        try:
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            # Now change to base directory
         
-        # load the model from disk
-        model = pickle.load(open("Model.sav", 'rb'))
-        X_test = np.load('X_test.npy') 
-        y_test = np.load('y_test.npy') 
+            os.chdir( Recovery_path ) 
 
-        Output = {'Model': model,
-                  'X': X_test,
-                  'Y': y_test}
-        
-        # Now change to base directory
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            # load the model from disk
+            model = pickle.load(open("Model.sav", 'rb'))
+            X_test = np.load('X_test.npy') 
+            y_test = np.load('y_test.npy') 
 
-        os.chdir( base_path ) 
+            Output = {'Model': model,
+                    'X': X_test,
+                    'Y': y_test}
+            
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
-        
-        return Output 
+            os.chdir( base_path ) 
+
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            print("ModelPar recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ModelPar not recovered =(" + '\033[0m')   
         
     else:
-        print("Wrong name lad/lass, please check de Recovery input")
+        print('\033[93m' + "Wrong name lad/lass, please check de Recovery input" + '\033[0m')
 
 #Normalization
 

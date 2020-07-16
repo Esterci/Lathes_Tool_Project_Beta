@@ -4,12 +4,17 @@ import pandas as pd
 
 #Recovering Data from previous analyse
 
+print('Recovery Control Output')
+print('----------------------------------')
+
 D_S_parameters =  mf.Recovery('D_S_parameters') 
 ExtractedNames =  mf.Recovery('ExtractedNames') 
 SelectedFeatures =  mf.Recovery('SelectedFeatures') 
 ReducedFeatures =  mf.Recovery('ReducedFeatures') 
 SODA_parameters, processing_parameters =  mf.Recovery ('SODA_parameters_processing_parameters') 
 ClassificationPar =  mf.Recovery('ClassificationPar')
+
+print("")
 
 #Main Code
 
