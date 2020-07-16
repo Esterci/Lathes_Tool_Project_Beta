@@ -12,6 +12,8 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import scipy as sp
+import sklearn.metrics as metrics
+import seaborn as sn
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from scipy import io
@@ -190,13 +192,15 @@ def Recovery (DataName):
         #print ("Current working directory %s" % retval)
         
         Output_Id = int(np.load('ID.npy'))
+        pace = np.load("Pace.npy")
         distances = np.load(('distances.npy'), allow_pickle=True) 
         distances = distances.tolist() 
         define_percent = np.load('define_percent.npy')
-    
+        
         Output = {'Percent': define_percent,
-                  'Distances': distances,
-                  'ID': Output_Id}
+                'Distances': distances,
+                'Pace': pace,
+                'ID': Output_Id}
         
         # Now change to base directory
 
@@ -1286,6 +1290,68 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
     
     return Output, processing_parameters
 
+#Confusion Matrix
+
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0):
+    
+    #Changing Work Folder
+    
+    add_path1 = "/.Kernel/"
+    add_path2 = "/Grouping_Analyses/Images/"
+    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
+    Kernel_path = base_path + add_path1
+    GA_Images_path = base_path + add_path2
+
+    #print(base_path)
+    #print(Kernel_path)
+    #print(GA_Images_path)
+     
+    # Now change to Kernel directory
+    
+    #os.chdir( Kernel_path )
+
+    if original == 0:
+        Z = np.genfromtxt('FinalTarget.csv', delimiter=',')
+        Z_rows = Z.shape
+    else:
+        Z = original
+        Z_rows = Z.shape
+
+
+    Y = ClassifiersLabel
+    Y_rows = Y.shape
+
+    if type == 'SODA':
+        y_label = ['Adequate Condition', 'Inadequate Condition']
+        x_label = ['Adequate Condition SODA', 'Inadequate Condition SODA']
+        title = 'SODA - {} - {} - {:.2f}'. format(DataSet_ID, d, g)
+        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(type, DataSet_ID, d, g)
+
+    if type == 'Classifiers':
+        y_label = ['Adequate Condition', 'Inadequate Condition']
+        x_label = ['Adequate Condition Predction', 'Inadequate Condition Prediction']
+        title = '{} - {} - {} - {:.2f}'. format(classifier, DataSet_ID, d, g)
+        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(classifier, DataSet_ID, d, g)
+
+    if Z_rows == Y_rows:
+        matrix = metrics.confusion_matrix(Z, Y)
+        fig = plt.figure(figsize=[10,7])
+
+        df_cm = pd.DataFrame(matrix, y_label, x_label)
+        sn.set(font_scale=1.5)
+        sn.heatmap(df_cm, annot=True, annot_kws={"size": 20}, fmt='d')
+
+        plt.title(title, fontsize=30)
+        plt.show()
+
+        # Now change to Images directory
+        os.chdir(GA_Images_path)
+    
+        fig.savefig(file_title, bbox_inches='tight')
+
+        # Go back do .Kernel directory
+        os.chdir(Kernel_path)
+
 #Grouping Algorithm
 
 def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_parameters):
@@ -1349,12 +1415,11 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
             #### Program Matrix's and Variables ####
 
-            n_DA_planes = np.max(SodaOutput)
+            n_DA_planes = np.max(SodaOutput) + 1
             Percent = np.zeros((int(n_DA_planes),3))
             n_IDs_per_gp = np.zeros((int(n_DA_planes),2))
             n_tot_Id_per_DA = np.zeros((int(n_DA_planes),1))
             decision = np.zeros(int(n_DA_planes))
-            selected_samples = np.zeros(2)
             n_DA_excluded = 0
             n_excluded = 0
             n_gp0 = 0
@@ -1368,22 +1433,23 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             for i in range(SodaOutput.shape[0]):
     
                 if i < n_IDs_gp0:
-                    n_IDs_per_gp [int(SodaOutput[i]-1),0] += 1 
+                    n_IDs_per_gp [int(SodaOutput[i]),0] += 1 
                 else:
-                    n_IDs_per_gp [int(SodaOutput[i]-1),1] += 1 
+                    n_IDs_per_gp [int(SodaOutput[i]),1] += 1 
 
-                n_tot_Id_per_DA [int(SodaOutput[i]-1)] += 1 
+                n_tot_Id_per_DA [int(SodaOutput[i])] += 1 
 
 
             for i in range(int(n_DA_planes)):
     
                 Percent[i,0] = (n_IDs_per_gp[i,0] / n_tot_Id_per_DA[i]) * 100
                 Percent[i,1] = (n_IDs_per_gp[i,1] / n_tot_Id_per_DA[i]) * 100
-                #Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_g[i,1])) / n_tot_Id_per_DA[i]) * 100
+                Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_gp[i,1])) 
+                    / n_tot_Id_per_DA[i]) * 100
     
             #### Using Definition Percentage as Decision Parameter ####
 
-            for i in range(Percent.shape[0]):  # pylint: disable=E1136  # pylint/issues/3139
+            for i in range(Percent.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
     
                 if (Percent[i,0] >= define_percent):
                     n_gp0 = n_gp0 + 1         
@@ -1416,16 +1482,10 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
                 if decision[int (SodaOutput[i]-1)] != -1:
     
                     SelectedData[k] = SelectedFeatures[i]
-                    ClassifiersLabel [k] = decision[int (SodaOutput[i]-1)]
+                    ClassifiersLabel [k] = int(not bool(decision[int(SodaOutput[i]-1)]))
+                
                     if k < int(SelectedFeatures.shape[0] - n_excluded - 1):
                         k += 1
-
-            for i in range (decision.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
-
-                if decision[i] != -1:
-                    
-                    selected_samples[0] += n_IDs_per_gp[i,0]
-                    selected_samples[1] += n_IDs_per_gp[i,1]      
 
             #### Printing Processed Data, ID's and Percentage
             
@@ -1457,13 +1517,10 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             print('Number of good tools groups: %d' % n_gp0)
             print('Number of worn tools groups: %d' % n_gp1)
             print('Number of excluded data clouds: %d' % n_DA_excluded)
-            print('Number of samples: %d' % int(SodaOutput.shape[0]))
-            print('Number of good tools samples: %d' % int(selected_samples[0]))
-            print('Number of worn tools samples: %d' % int(selected_samples[1]))
-            print('Number of excluded samples: %d' % n_excluded)
             print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             print('Analyse execution time: %.6f segundos' % totaltime)
             print('Avarage CPU usage: %.2f' % cpu_percent)
+            #confusionmatrix(DataSetID, d, g, ClassifiersLabel, 'SODA')
             print('---------------------------------------------------')
             
             #### Saving Processed Data, ID's and Percentage
@@ -1478,11 +1535,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             Grouping_Analyse.write('Number of good tools groups: %d\n' % n_gp0)
             Grouping_Analyse.write('Number of worn tools groups: %d\n' % n_gp1)
             Grouping_Analyse.write('Number of excluded data clouds: %d\n' % n_DA_excluded)
-            Grouping_Analyse.write('Number of samples: %d\n' % int(SodaOutput.shape[0]))
-            Grouping_Analyse.write('Number of good tools samples: %d\n' % int(selected_samples[0]))
-            Grouping_Analyse.write('Number of worn tools samples: %d\n' % int(selected_samples[1]))
-            Grouping_Analyse.write('Number of excluded samples: %d\n' % n_excluded)
-            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
+            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))# pylint: disable=E1136  # pylint/issues/3139
             Grouping_Analyse.write('Analyse execution time: %.6f segundos\n' % totaltime)
             Grouping_Analyse.write('Avarage CPU usage: %.2f\n' % cpu_percent)
             Grouping_Analyse.write('---------------------------------------------------')
@@ -1493,11 +1546,12 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     # Now change to base directory
     
     os.chdir( Recovery_path )
-    
+
     np.save("define_percent.npy",define_percent)
     
     Output = {'Percent': define_percent,
               'Distances': distances,
+              'Pace': pace,
               'ID': DataSetID}
     
     # Now change to base directory
@@ -1511,17 +1565,21 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
 #Classifiers
 
-def Classification (ClassificationPar,n_a,g):
+def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plot_matrix=False):
     
     #Changing Work Folder
-    
     add_path1 = "/Classification/"
     add_path2 = "/.Kernel/"
-    #add_path3 = "/.Recovery/"
+    add_path3 = "/.Recovery/"
     base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
     Classification_path = base_path + add_path1
     Kernel_path = base_path + add_path2
-    #Recovery_path = base_path + add_path3
+    Recovery_path = base_path + add_path3
+
+    # Change to Kernel directory
+    os.chdir(Kernel_path)
+    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+
 
     names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
@@ -1539,63 +1597,76 @@ def Classification (ClassificationPar,n_a,g):
         AdaBoostClassifier(),
         GaussianNB(),
         QuadraticDiscriminantAnalysis()]
-    for d in ClassificationPar['Distances']:
-        
-        # Now change to Kernel directory
     
-        os.chdir( Kernel_path )
-    
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
-        
-        # preprocess dataset, split into training and test part
-        Accuracy = np.zeros((n_a, len(names)))
-        #"Y_60_euclidean_Labels_7_1.25.csv"
-        s = str (int(ClassificationPar['Percent'] )) + '_' + d + '_Labels_' + str(int(ClassificationPar['ID'])) + '_' + str("%.2f" % g) + '.csv'
-        X = np.genfromtxt(('X_' + s) , delimiter=',')    
-        y = np.genfromtxt(('Y_' + s), delimiter=',') 
-        X = StandardScaler().fit_transform(X)
-        X_train, X_test, y_train, y_test = \
-        train_test_split(X, y, test_size=.4, random_state=42)
+    Output_ID = ClassificationPar['ID']
+    distances = ClassificationPar['Distances']
+    pace = ClassificationPar['Pace']
+    gra = np.arange(min_granularity,max_granularity,pace)
 
-        #Loop into numbeer od samples
-        for i in range(Accuracy.shape[0]):# pylint: disable=E1136  # pylint/issues/3139
-            k = 0
-            # iterate over classifiers
-            for name, clf in zip(names, classifiers):
-        
-                clf.fit(X_train, y_train)
-                score = clf.score(X_test, y_test)
-                Accuracy[i,k] = (score*100)
-                k +=1
-        
-        #Creating Matrix for Mean an Std. Derivatio
-        results = np.zeros((len(names),2))
+    for d in distances:
+        for g in gra:
+            try:
+                # Now change to Kernel directory
+                
+                #os.chdir( Kernel_path )
+                
+                #retval = os.getcwd()
+                #print ("Current working directory %s" % retval)
+                
+                # preprocess dataset, split into training and test part
+                Accuracy = np.zeros((n_a, len(names)))
+                #"Y_60_euclidean_Labels_7_1.25.csv"
+                s = str (int(ClassificationPar['Percent'] )) + '_' + d + '_Labels_' + str(int(ClassificationPar['ID'])) + '_' + str("%.2f" % g) + '.csv'
+                X = np.genfromtxt(('X_' + s) , delimiter=',')    
+                y_soda = np.genfromtxt(('Y_' + s), delimiter=',') 
+                X = StandardScaler().fit_transform(X)
+                X_train, X_test, y_train_soda, y_test_soda, y_train_original, y_test_original = \
+                train_test_split(X, y_soda, y_original, test_size=.4, random_state=42, stratify=y_soda)
 
-        #Calculinng Mean and Std. Derivation 
-        for i in range(len(names)):
-            results[i,0] = round (np.mean(Accuracy[:,i]), 2 )
-            results[i,1] = round (np.std(Accuracy[:,i]), 2)
-            
-        # Now change to Grouping Analyses directory
-    
-        os.chdir( Classification_path )
-    
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+                #Loop into numbeer od samples
+                for i in range(Accuracy.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
+                    k = 0
+                    # iterate over classifiers
+                    for name, clf in zip(names, classifiers):
+                    
+                        clf.fit(X_train, y_train_soda)
+                        score = clf.score(X_test, y_test_original)
+                        Accuracy[i,k] = (score*100)
+                        k +=1
+                        if plot_matrix:
+                            ClassifiersLabel = list(clf.predict(X_test))
+                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
+                
+                #Creating Matrix for Mean an Std. Derivatio
+                results = np.zeros((len(names),2))
 
-        results = pd.DataFrame(results, index = names, columns = ['Media','Desvio'])       
-        results.to_csv(("Classification_result_" + s) )
-        
-        print(d + ' ' + str(g))
-        print('-------------------------------------')
-        print(results)
-        print(' ')
+                #Calculinng Mean and Std. Derivation 
+                for i in range(len(names)):
+                    results[i,0] = round (np.mean(Accuracy[:,i]), 2 )
+                    results[i,1] = round (np.std(Accuracy[:,i]), 2)
+                        
+                # Now change to Grouping Analyses directory
+                
+                os.chdir( Classification_path )
+                
+                #retval = os.getcwd()
+                #print ("Current working directory %s" % retval)
+
+                results = pd.DataFrame(results, index = names, columns = ['Media','Desvio'])       
+                results.to_csv(("Classification_result_" + s) )
+                    
+                
+                print('*** {} - {} - {:.2f}  ***'.format(ClassificationPar['ID'], d, g))
+                print('-------------------------------------')
+                print(results)
+                print(' ')
+
+            except:
+                print('*** {} - {} - {:.2f}  ***'.format(Output_ID, d, g))
         
     # Now change to base directory
-    
+
     os.chdir( base_path )
-    
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
 
