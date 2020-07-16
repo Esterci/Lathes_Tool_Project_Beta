@@ -1,0 +1,9 @@
+SODA_canberra_label_30_6.75.csv
+Number of data clouds: 1262
+Number of good tools groups: 6
+Number of worn tools groups: 1253
+Number of excluded data clouds: 3
+Data representation loss: 0.25
+Analyse execution time: 68.495858 segundos
+Avarage CPU usage: 34.72
+---------------------------------------------------

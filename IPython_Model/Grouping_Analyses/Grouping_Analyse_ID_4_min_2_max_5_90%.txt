@@ -8,6 +8,6 @@ Number of good tools samples: 17
 Number of worn tools samples: 1
 Number of excluded samples: 19
 Data representation loss: 51.35
-Analyse execution time: 2.015669 segundos
-Avarage CPU usage: 14.46
+Analyse execution time: 2.005736 segundos
+Avarage CPU usage: 56.81
 ---------------------------------------------------
