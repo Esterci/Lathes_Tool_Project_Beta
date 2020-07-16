@@ -12,6 +12,8 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import scipy as sp
+import sklearn.metrics as metrics
+import seaborn as sn
 from sklearn import preprocessing
 from sklearn.preprocessing import StandardScaler
 from scipy import io
@@ -1288,6 +1290,68 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
     
     return Output, processing_parameters
 
+#Confusion Matrix
+
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0):
+    
+    #Changing Work Folder
+    
+    add_path1 = "/.Kernel/"
+    add_path2 = "/Grouping_Analyses/Images/"
+    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
+    Kernel_path = base_path + add_path1
+    GA_Images_path = base_path + add_path2
+
+    #print(base_path)
+    #print(Kernel_path)
+    #print(GA_Images_path)
+     
+    # Now change to Kernel directory
+    
+    #os.chdir( Kernel_path )
+
+    if original == 0:
+        Z = np.genfromtxt('FinalTarget.csv', delimiter=',')
+        Z_rows = Z.shape
+    else:
+        Z = original
+        Z_rows = Z.shape
+
+
+    Y = ClassifiersLabel
+    Y_rows = Y.shape
+
+    if type == 'SODA':
+        y_label = ['Adequate Condition', 'Inadequate Condition']
+        x_label = ['Adequate Condition SODA', 'Inadequate Condition SODA']
+        title = 'SODA - {} - {} - {:.2f}'. format(DataSet_ID, d, g)
+        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(type, DataSet_ID, d, g)
+
+    if type == 'Classifiers':
+        y_label = ['Adequate Condition', 'Inadequate Condition']
+        x_label = ['Adequate Condition Predction', 'Inadequate Condition Prediction']
+        title = '{} - {} - {} - {:.2f}'. format(classifier, DataSet_ID, d, g)
+        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(classifier, DataSet_ID, d, g)
+
+    if Z_rows == Y_rows:
+        matrix = metrics.confusion_matrix(Z, Y)
+        fig = plt.figure(figsize=[10,7])
+
+        df_cm = pd.DataFrame(matrix, y_label, x_label)
+        sn.set(font_scale=1.5)
+        sn.heatmap(df_cm, annot=True, annot_kws={"size": 20}, fmt='d')
+
+        plt.title(title, fontsize=30)
+        plt.show()
+
+        # Now change to Images directory
+        os.chdir(GA_Images_path)
+    
+        fig.savefig(file_title, bbox_inches='tight')
+
+        # Go back do .Kernel directory
+        os.chdir(Kernel_path)
+
 #Grouping Algorithm
 
 def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_parameters):
@@ -1298,7 +1362,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
     add_path4 = "/Grouping_Analyses/"
-    base_path = os.path.dirname(os.path.abspath("Model_Unified_Code.ipynb"))
+    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
     PCA_Analyses_path = base_path + add_path1
     Kernel_path = base_path + add_path2
     Recovery_path = base_path + add_path3
@@ -1385,7 +1449,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     
             #### Using Definition Percentage as Decision Parameter ####
 
-            for i in range(Percent.shape[0]):
+            for i in range(Percent.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
     
                 if (Percent[i,0] >= define_percent):
                     n_gp0 = n_gp0 + 1         
@@ -1453,10 +1517,10 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             print('Number of good tools groups: %d' % n_gp0)
             print('Number of worn tools groups: %d' % n_gp1)
             print('Number of excluded data clouds: %d' % n_DA_excluded)
-            print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))
+            print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             print('Analyse execution time: %.6f segundos' % totaltime)
             print('Avarage CPU usage: %.2f' % cpu_percent)
-            confusionmatrix(DataSetID, d, g, ClassifiersLabel, 'SODA')
+            #confusionmatrix(DataSetID, d, g, ClassifiersLabel, 'SODA')
             print('---------------------------------------------------')
             
             #### Saving Processed Data, ID's and Percentage
@@ -1471,7 +1535,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             Grouping_Analyse.write('Number of good tools groups: %d\n' % n_gp0)
             Grouping_Analyse.write('Number of worn tools groups: %d\n' % n_gp1)
             Grouping_Analyse.write('Number of excluded data clouds: %d\n' % n_DA_excluded)
-            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))
+            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))# pylint: disable=E1136  # pylint/issues/3139
             Grouping_Analyse.write('Analyse execution time: %.6f segundos\n' % totaltime)
             Grouping_Analyse.write('Avarage CPU usage: %.2f\n' % cpu_percent)
             Grouping_Analyse.write('---------------------------------------------------')
@@ -1507,7 +1571,7 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
     add_path1 = "/Classification/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = os.path.dirname(os.path.abspath("Model_Unified_Code.ipynb"))
+    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
     Classification_path = base_path + add_path1
     Kernel_path = base_path + add_path2
     Recovery_path = base_path + add_path3
