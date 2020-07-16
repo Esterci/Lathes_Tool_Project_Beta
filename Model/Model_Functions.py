@@ -1390,78 +1390,78 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             time_cpu_thread = cpu_usage()
             time_cpu_thread.start()
     
-            s = 'SODA_' + d + '_label_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv';
+            s = 'SODA_' + d + '_label_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv'
             
 
             #### Data-base Imput ####
             
             # Now change to Kernel directory
     
-            os.chdir( Kernel_path );
+            os.chdir( Kernel_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
 
-            SodaOutput = np.genfromtxt( s , delimiter=',');
+            SodaOutput = np.genfromtxt( s , delimiter=',')
             
             # Now change to PCA Analyses directory
     
-            os.chdir( PCA_Analyses_path );
+            os.chdir( PCA_Analyses_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
             
-            SelectedFeatures = np.genfromtxt('features_reduzidas_' + str(DataSetID) + '.csv' , delimiter=',');
+            SelectedFeatures = np.genfromtxt('features_reduzidas_' + str(DataSetID) + '.csv' , delimiter=',')
 
             #### Program Matrix's and Variables ####
 
-            n_DA_planes = np.max(SodaOutput);
-            Percent = np.zeros((int(n_DA_planes),3));
-            n_IDs_per_gp = np.zeros((int(n_DA_planes),2));
-            n_tot_Id_per_DA = np.zeros((int(n_DA_planes),1));
-            decision = np.zeros(int(n_DA_planes));
-            selected_samples = np.zeros(2);
-            n_DA_excluded = 0;
-            n_excluded = 0;
-            n_gp0 = 0;
-            n_gp1 = 0;
-            n_gp2 = 0;
-            n_data_def = 0;
-            k = 0;
+            n_DA_planes = np.max(SodaOutput)
+            Percent = np.zeros((int(n_DA_planes),3))
+            n_IDs_per_gp = np.zeros((int(n_DA_planes),2))
+            n_tot_Id_per_DA = np.zeros((int(n_DA_planes),1))
+            decision = np.zeros(int(n_DA_planes))
+            selected_samples = np.zeros(2)
+            n_DA_excluded = 0
+            n_excluded = 0
+            n_gp0 = 0
+            n_gp1 = 0
+            n_gp2 = 0
+            n_data_def = 0
+            k = 0
 
             #### Definition Percentage Calculation #####
 
             for i in range(SodaOutput.shape[0]):
     
                 if i < n_IDs_gp0:
-                    n_IDs_per_gp [int(SodaOutput[i]-1),0] += 1 ;
+                    n_IDs_per_gp [int(SodaOutput[i]-1),0] += 1 
                 else:
-                    n_IDs_per_gp [int(SodaOutput[i]-1),1] += 1 ;
+                    n_IDs_per_gp [int(SodaOutput[i]-1),1] += 1 
 
-                n_tot_Id_per_DA [int(SodaOutput[i]-1)] += 1 ;
+                n_tot_Id_per_DA [int(SodaOutput[i]-1)] += 1 
 
 
             for i in range(int(n_DA_planes)):
     
-                Percent[i,0] = (n_IDs_per_gp[i,0] / n_tot_Id_per_DA[i]) * 100;
-                Percent[i,1] = (n_IDs_per_gp[i,1] / n_tot_Id_per_DA[i]) * 100;
-                #Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_g[i,1])) / n_tot_Id_per_DA[i]) * 100;
+                Percent[i,0] = (n_IDs_per_gp[i,0] / n_tot_Id_per_DA[i]) * 100
+                Percent[i,1] = (n_IDs_per_gp[i,1] / n_tot_Id_per_DA[i]) * 100
+                #Percent[i,2] = ((n_tot_Id_per_DA[i]  -  (n_IDs_per_gp[i,0] + n_IDs_per_g[i,1])) / n_tot_Id_per_DA[i]) * 100
     
             #### Using Definition Percentage as Decision Parameter ####
 
-            for i in range(Percent.shape[0]):
+            for i in range(Percent.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
     
                 if (Percent[i,0] >= define_percent):
-                    n_gp0 = n_gp0 + 1 ;        
+                    n_gp0 = n_gp0 + 1         
                 elif (Percent[i,1] >= define_percent):    
-                    n_gp1 = n_gp1 + 1 ;
-                    decision[i] = 1;
+                    n_gp1 = n_gp1 + 1 
+                    decision[i] = 1
                 elif (Percent[i,2] >= define_percent):
-                    n_gp2 = n_gp2 + 1 ;
-                    decision[i] = 2;
+                    n_gp2 = n_gp2 + 1 
+                    decision[i] = 2
                 else:
-                    n_DA_excluded += 1;
-                    decision[i] = -1;
+                    n_DA_excluded += 1
+                    decision[i] = -1
             
             #### Using decision matrix to determine the number of excluded data
                        
@@ -1469,41 +1469,41 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
                 if decision[i] == -1:
                     
-                    n_excluded += np.sum(n_IDs_per_gp[i,:]);
+                    n_excluded += np.sum(n_IDs_per_gp[i,:])
                     
         
             #### Passing data of well defined DA planes to SelectedData and defining labels
 
-            SelectedData = np.zeros((int(SelectedFeatures.shape[0] - n_excluded),int(SelectedFeatures.shape[1])));
-            ClassifiersLabel = np.zeros((int(SelectedFeatures.shape[0] - n_excluded)));
+            SelectedData = np.zeros((int(SelectedFeatures.shape[0] - n_excluded),int(SelectedFeatures.shape[1])))# pylint: disable=E1136  # pylint/issues/3139
+            ClassifiersLabel = np.zeros((int(SelectedFeatures.shape[0] - n_excluded)))# pylint: disable=E1136  # pylint/issues/3139
             
             
-            for i in range (SodaOutput.shape[0]):
+            for i in range (SodaOutput.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
                 if decision[int (SodaOutput[i]-1)] != -1:
     
-                    SelectedData[k] = SelectedFeatures[i];
-                    ClassifiersLabel [k] = decision[int (SodaOutput[i]-1)];
+                    SelectedData[k] = SelectedFeatures[i]
+                    ClassifiersLabel [k] = decision[int (SodaOutput[i]-1)]
                     if k < int(SelectedFeatures.shape[0] - n_excluded - 1):
-                        k += 1;
+                        k += 1
 
-            for i in range (decision.shape[0]):
+            for i in range (decision.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
 
                 if decision[i] != -1:
                     
-                    selected_samples[0] += n_IDs_per_gp[i,0];
-                    selected_samples[1] += n_IDs_per_gp[i,1];      
+                    selected_samples[0] += n_IDs_per_gp[i,0]
+                    selected_samples[1] += n_IDs_per_gp[i,1]      
 
             #### Printing Processed Data, ID's and Percentage
             
             # Now change to Kernel directory
     
-            os.chdir( Kernel_path );
+            os.chdir( Kernel_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
 
-            np.savetxt('X_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', SelectedData, delimiter=',');
-            np.savetxt('Y_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', ClassifiersLabel, delimiter=',');
+            np.savetxt('X_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', SelectedData, delimiter=',')
+            np.savetxt('Y_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', ClassifiersLabel, delimiter=',')
     
             ### Interrupt Thread and recalculate parameters
             time_cpu_thread.stop()
@@ -1518,42 +1518,42 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
             
             ### Printig Analitics results
             
-            print(s);
+            print(s)
             print('Number of data clouds: %d' % n_DA_planes)
             print('Number of good tools groups: %d' % n_gp0)
             print('Number of worn tools groups: %d' % n_gp1)
             print('Number of excluded data clouds: %d' % n_DA_excluded)
-            print('Number of samples: %d' % int(SodaOutput.shape[0]))
-            print('Number of good tools samples: %d' % int(selected_samples[0]));
-            print('Number of worn tools samples: %d' % int(selected_samples[1]));
+            print('Number of samples: %d' % int(SodaOutput.shape[0])) # pylint: disable=E1136  # pylint/issues/3139
+            print('Number of good tools samples: %d' % int(selected_samples[0]))
+            print('Number of worn tools samples: %d' % int(selected_samples[1]))
             print('Number of excluded samples: %d' % n_excluded)
-            print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))
+            print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             print('Analyse execution time: %.6f segundos' % totaltime)
             print('Avarage CPU usage: %.2f' % cpu_percent)
-            print('---------------------------------------------------');
+            print('---------------------------------------------------')
             
             #### Saving Processed Data, ID's and Percentage
             
             # Now change to Kernel directory
     
-            os.chdir( Grouping_Analyses_path );
+            os.chdir( Grouping_Analyses_path )
             
-            Grouping_Analyse = open("Grouping_Analyse_ID_" + str(DataSetID) + "_min_" + str(min_granularity) + "_max_" + str(max_granularity) + '_' + str(define_percent) +"%.txt","w+");
+            Grouping_Analyse = open("Grouping_Analyse_ID_" + str(DataSetID) + "_min_" + str(min_granularity) + "_max_" + str(max_granularity) + '_' + str(define_percent) +"%.txt","w+")
             Grouping_Analyse.write(s)
             Grouping_Analyse.write('\nNumber of data clouds: %d\n' % n_DA_planes)
             Grouping_Analyse.write('Number of good tools groups: %d\n' % n_gp0)
             Grouping_Analyse.write('Number of worn tools groups: %d\n' % n_gp1)
             Grouping_Analyse.write('Number of excluded data clouds: %d\n' % n_DA_excluded)
             Grouping_Analyse.write('Number of samples: %d\n' % int(SodaOutput.shape[0]))
-            Grouping_Analyse.write('Number of good tools samples: %d\n' % int(selected_samples[0]));
-            Grouping_Analyse.write('Number of worn tools samples: %d\n' % int(selected_samples[1]));
+            Grouping_Analyse.write('Number of good tools samples: %d\n' % int(selected_samples[0]))
+            Grouping_Analyse.write('Number of worn tools samples: %d\n' % int(selected_samples[1]))
             Grouping_Analyse.write('Number of excluded samples: %d\n' % n_excluded)
-            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100)))
+            Grouping_Analyse.write('Data representation loss: %.2f\n' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             Grouping_Analyse.write('Analyse execution time: %.6f segundos\n' % totaltime)
             Grouping_Analyse.write('Avarage CPU usage: %.2f\n' % cpu_percent)
             Grouping_Analyse.write('---------------------------------------------------')
             
-            Grouping_Analyse.close();
+            Grouping_Analyse.close()
     #np.savetxt('Percent.csv',define_percent,delimiter = ',')
     
     # Now change to base directory
