@@ -1,10 +1,10 @@
+print('.: Welcome to our Autonomous Model Users\' Interface (AMUI)! :.' )
+recovery_decision = input('\nWould you like to recover the previous analyses\' variables?(y/n) ')
+
 import Model_Functions as mf
 import numpy as np
 import pandas as pd
 from time import sleep
-
-print('.: Welcome to our Autonomous Model Users\' Interface (AMUI)! :.' )
-recovery_decision = input('\nWould you like to recover the previous analyses\' variables?(y/n) ')
 
 if recovery_decision == 'y':
 
@@ -26,7 +26,7 @@ if recovery_decision == 'y':
     
     print('__________________________________________')
     print('')
-    sleep(2)
+    sleep(1)
     
 
 
@@ -60,7 +60,7 @@ else:
 
 #Main Code
 
-mode_decision = input('Choose the analyse mode from the list below:\n\n1. Interative Mode (Not done yet, keep up with new releases.)\n2. Direct Mode\nType a number and press ENTER: ')
+mode_decision = input('Choose the analyse mode from the list below:\n\n1. Interative Mode (Not done yet, keep up with new releases.)\n2. Direct Mode\n\nType a number and press ENTER: ')
 
 if mode_decision == '1':
 
@@ -80,7 +80,7 @@ if mode_decision == '2':
 
     ClassificationPar = mf.GroupingAlgorithm(SODA_parameters,80,20, processing_parameters) # (Labels do SODA, Porcentagem de definição, numero de ID's boas, parametros de processamento)
 
-    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=False) #(Parametros do data-set,  min_grid_size, max_grid_size,plotar matriz de confusão (True or False))
+    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size,plotar matriz de confusão (True or False))
     """
     ModelPar = mf.Model_Train(ClassificationPar,'euclidean',"Neural Net",2.75) #(Parametros da data-set, distância, Modelo, granularidade)
 

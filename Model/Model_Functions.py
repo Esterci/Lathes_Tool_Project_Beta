@@ -45,10 +45,11 @@ def Recovery (DataName):
     add_path1 = "/PCA_Analyses/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    PCA_Analyses_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd ()
+    working_path = os.getcwd() + '/Model'
+    PCA_Analyses_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
     
     if DataName == 'D_S_parameters':
 
@@ -323,10 +324,11 @@ def DataSlicer (Output_Id, id_per_group, Choice):
     add_path1 = "/Input/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Input_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Input_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
      
     # Now change to Input directory
     
@@ -492,16 +494,17 @@ def TSFRESH_Extraction(D_S_parameters):
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
         
     # Now change to Kernel directory
     
     os.chdir( Kernel_path )
     
     ###______________________________________________________________________###
-    ###                         Feature Extraction                          ###
+    ###                         Feature Extraction                           ###
 
     #E_N_groups = np.load('E_N_groups.npy')
     P_N_groups = D_S_parameters['M_N_groups']
@@ -547,8 +550,9 @@ def TSFRESH_Selection(D_S_parameters,extracted_names):
     #Changing Work Folder
     
     add_path2 = "/.Kernel/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
         
     # Now change back to Kernel directory
     
@@ -607,11 +611,12 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):
         add_path2 = "/Input/"
         #add_path3 = "/.Recovery/"
         add_path4 = "/PCA_Analyses/Figures/"        
-        base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-        PCA_Analyses_path = base_path + add_path1
-        Input_path = base_path + add_path2
-        #Recovery_path = base_path + add_path3
-        PCA_Figures_path = base_path + add_path4
+        base_path = os.getcwd()
+        working_path = os.getcwd() + '/Model'
+        PCA_Analyses_path = working_path + add_path1
+        Input_path = working_path + add_path2
+        #Recovery_path = working_path + add_path3
+        PCA_Figures_path = working_path + add_path4
 
         # Now change to PCA Figures directory
 
@@ -1260,9 +1265,10 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
     
     DataSetID = ReducedFeatures['ID']
     data = ReducedFeatures['ReducedFeatures']
@@ -1334,15 +1340,16 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
 
 #Confusion Matrix
 
-def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0):
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0, plot=False):
     
     #Changing Work Folder
     
     add_path1 = "/.Kernel/"
     add_path2 = "/Grouping_Analyses/Images/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path1
-    GA_Images_path = base_path + add_path2
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path1
+    GA_Images_path = working_path + add_path2
 
     #print(base_path)
     #print(Kernel_path)
@@ -1384,7 +1391,10 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
         sn.heatmap(df_cm, annot=True, annot_kws={"size": 20}, fmt='d')
 
         plt.title(title, fontsize=30)
-        plt.show()
+
+        if plot:
+            plt.show()
+            print('confusionmat funcando')
 
         # Now change to Images directory
         os.chdir(GA_Images_path)
@@ -1404,11 +1414,12 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
     add_path4 = "/Grouping_Analyses/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    PCA_Analyses_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
-    Grouping_Analyses_path = base_path + add_path4
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    PCA_Analyses_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
+    Grouping_Analyses_path = working_path + add_path4
     
     print('             ')
     print('Grouping Algorithm Control Output')
@@ -1626,10 +1637,11 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
     add_path1 = "/Classification/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Classification_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Classification_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
 
     # Change to Kernel directory
     os.chdir(Kernel_path)
@@ -1690,8 +1702,11 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
                         k +=1
                         if plot_matrix:
                             ClassifiersLabel = list(clf.predict(X_test))
-                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
-                
+                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original,plot=True)
+                            print('Claasificatiojn funfando')
+
+                        ClassifiersLabel = list(clf.predict(X_test))
+                        confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
                 #Creating Matrix for Mean an Std. Derivatio
                 results = np.zeros((len(names),2))
 
@@ -1735,9 +1750,10 @@ def Model_Train (ClassificationPar,d, Model_Name, g):
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
 
     names = ["Nearest Neighbors", "SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
