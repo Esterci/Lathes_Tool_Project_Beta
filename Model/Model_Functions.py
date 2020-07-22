@@ -1631,7 +1631,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
 #Classifiers
 
-def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plot_matrix=False):
+def Classification (ClassificationPar, min_granularity,max_granularity, plot_matrix=False):
     
     #Changing Work Folder
     add_path1 = "/Classification/"
@@ -1645,8 +1645,16 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
 
     # Change to Kernel directory
     os.chdir(Kernel_path)
+
     y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
 
+    n_a = 0
+
+    for i in range (y_original.shape[0]):
+
+        if y_original[i] == 0:
+            n_a += 1
+        print(n_a)
 
     names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
