@@ -36,9 +36,7 @@ from tsfresh.feature_extraction import extract_features, ComprehensiveFCParamete
 import os
 import pickle
 
-#Recovery function 
-
-def Recovery (DataName):
+def Recovery (DataName): #Recovery function 
 
     #Changing Work Folder
 
@@ -284,9 +282,7 @@ def Recovery (DataName):
     else:
         print('\033[93m' + "Wrong name lad/lass, please check de Recovery input" + '\033[0m')
 
-#Normalization
-
-def scale(X, x_min, x_max):
+def scale(X, x_min, x_max): #Normalization
 
     nom = (X-X.min(axis=0))*(x_max-x_min)
     denom = X.max(axis=0) - X.min(axis=0)
@@ -294,9 +290,7 @@ def scale(X, x_min, x_max):
         denom = 1
     return x_min + nom/denom
    
-#Plot Formater
-
-def format_func(value, tick_number):
+def format_func(value, tick_number): #Plot Formater
     # find number of multiples of pi/2
     N = int(value)
     if N == 0:
@@ -312,9 +306,7 @@ def format_func(value, tick_number):
     elif N == 250:
         return "X250"
 
-#Data Slicer
-
-def DataSlicer (Output_Id, id_per_group, Choice):
+def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
     
     print('Data Slicer Control Output')
     print('----------------------------------')
@@ -482,9 +474,7 @@ def DataSlicer (Output_Id, id_per_group, Choice):
     
     return Output
 
-#TSFRESH
-
-def TSFRESH_Extraction(D_S_parameters):
+def TSFRESH_Extraction(D_S_parameters): #TSFRESH Extraction
     
     print('             ')
     print('TSFRESH Control Output')
@@ -539,7 +529,7 @@ def TSFRESH_Extraction(D_S_parameters):
     
     return extracted_names
 
-def TSFRESH_Selection(D_S_parameters,extracted_names):   
+def TSFRESH_Selection(D_S_parameters,extracted_names): #TSFRESH Selection
     ###______________________________________________________________________###
     ###                          Feature Selection                           ###
     
@@ -597,9 +587,7 @@ def TSFRESH_Selection(D_S_parameters,extracted_names):
     
     return Output
 
-#PCA
-
-def PCA_calc (SelectedFeatures,N_PCs,Chose):
+def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
     
     #%matplotlib%
 
@@ -1021,10 +1009,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):
         print("Wrong Choose entry, verify this input.")
         return
 
-#SODA
-
-### Thread to calculate duration and mean cpu percente usage in a SODA classifier
-class cpu_usage(threading.Thread):
+class cpu_usage(threading.Thread):### Thread to calculate duration and mean cpu percente usage in a SODA classifier
     def __init__(self):
         threading.Thread.__init__(self)
         self.control = True
@@ -1045,7 +1030,7 @@ class cpu_usage(threading.Thread):
         threading.Thread.join(self)
         return self.deltatime, self.mean_cpu
 
-def grid_set(data, N):
+def grid_set(data, N): #SODA process
     _ , W = data.shape
     AvD1 = data.mean(0)
     X1 = np.mean(np.sum(np.power(data,2),axis=1))
@@ -1061,7 +1046,7 @@ def grid_set(data, N):
     grid_angl = np.sqrt(1-AvD2*AvD2.T)/N
     return X1, AvD1, AvD2, grid_trad, grid_angl
 
-def pi_calculator(Uniquesample, mode):
+def pi_calculator(Uniquesample, mode):#SODA process
     UN, W = Uniquesample.shape
     if mode == 'euclidean' or mode == 'mahalanobis' or mode == 'cityblock' or mode == 'chebyshev' or mode == 'canberra':
         AA1 = Uniquesample.mean(0)
@@ -1097,7 +1082,7 @@ def pi_calculator(Uniquesample, mode):
         
     return uspi
 
-def Globaldensity_Calculator(data, distancetype):
+def Globaldensity_Calculator(data, distancetype):#SODA process
     
     Uniquesample, J, K = np.unique(data, axis=0, return_index=True, return_inverse=True)
     Frequency, _ = np.histogram(K,bins=len(J))
@@ -1117,7 +1102,7 @@ def Globaldensity_Calculator(data, distancetype):
  
     return GD, Uniquesample, Frequency
 
-def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distancetype):
+def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distancetype):#SODA process
     L, W = Uniquesample.shape
     if distancetype == 'euclidean':
         W = 1
@@ -1160,7 +1145,7 @@ def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distan
 
     return BOX, BOX_miu, BOX_X, BOX_S, BOXMT, NB
 
-def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distancetype):
+def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distancetype):#SODA process
     Centers = []
     n = 2
     ModeNumber = 0
@@ -1185,7 +1170,7 @@ def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distan
 
     return Centers, ModeNumber
 
-def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,grid_angl, distancetype):
+def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,grid_angl, distancetype):#SODA process
     L, W = Uniquesample.shape
     Membership = np.zeros((L,ModelNumber))
     Members = np.zeros((L,ModelNumber*W))
@@ -1215,7 +1200,7 @@ def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,g
     B = [x+1 for x in B]
     return Members,MemberNumber,Membership,B
 
-def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):
+def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):#SODA process
     
     """
     Self-organising Direction-Aware Data Partitioning (offline version)
@@ -1259,7 +1244,7 @@ def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):
            
     return Output
 
-def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
+def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
     
     #Changing Work Folder
     
@@ -1338,9 +1323,7 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
     
     return Output, processing_parameters
 
-#Confusion Matrix
-
-def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0, plot=False):
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0, plot=False): #Confusion Matrix
     
     #Changing Work Folder
     
@@ -1404,9 +1387,7 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
         # Go back do .Kernel directory
         os.chdir(Kernel_path)
 
-#Grouping Algorithm
-
-def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_parameters):
+def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #Grouping Algorithm
     
     #Changing Work Folder
     
@@ -1432,6 +1413,19 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     max_granularity = SODA_parameters['Max_g']
     pace = SODA_parameters['Pace']
     distances = SODA_parameters['Distances']
+
+    # Change to Kernel directory
+    os.chdir(Kernel_path)
+
+    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+
+    n_IDs_gp0 = 0
+
+    for i in range (y_original.shape[0]):
+
+        if y_original[i] == 0:
+            n_IDs_gp0 += 1
+
     # functional engines
     #n_IDs_gp1 = 0 # non-functional engines
     #n_IDs_gp2 = 3598 # eminent  fault  engines
@@ -1629,9 +1623,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
     return Output
 
-#Classifiers
-
-def Classification (ClassificationPar, min_granularity,max_granularity, plot_matrix=False):
+def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot_matrix=False): #Classifiers
     
     #Changing Work Folder
     add_path1 = "/Classification/"
@@ -1647,14 +1639,6 @@ def Classification (ClassificationPar, min_granularity,max_granularity, plot_mat
     os.chdir(Kernel_path)
 
     y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
-
-    n_a = 0
-
-    for i in range (y_original.shape[0]):
-
-        if y_original[i] == 0:
-            n_a += 1
-        print(n_a)
 
     names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
@@ -1750,9 +1734,7 @@ def Classification (ClassificationPar, min_granularity,max_granularity, plot_mat
 
     return
 
-#Model Training
-
-def Model_Train (ClassificationPar,d, Model_Name, g):
+def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
     
     #Changing Work Folder
     
@@ -1832,8 +1814,6 @@ def Model_Train (ClassificationPar,d, Model_Name, g):
 
 
     return Output
-
-#Model Prediction
 
 def Model_Predict (ModelPar):
     for i in range (ModelPar['Y'].shape[0]):
