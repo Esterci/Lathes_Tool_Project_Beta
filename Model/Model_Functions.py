@@ -1054,8 +1054,10 @@ def pi_calculator(Uniquesample, mode):#SODA process
         DT1 = X1 - sum(np.power(AA1,2))
         aux = []
         for i in range(UN): aux.append(AA1)
-        aux2 = [Uniquesample[i]-aux[i] for i in range(UN)]
-        uspi = np.sum(np.power(aux2,2),axis=1)+DT1
+        #aux2 = [Uniquesample[i]-aux[i] for i in range(UN)]
+        #uspi = np.sum(np.power(aux2,2),axis=1)+DT1
+        uspi = np.power(cdist(Uniquesample, aux, mode),2)+DT1
+        uspi = uspi[:,0]
     
     if mode == 'minkowski':
         AA1 = Uniquesample.mean(0)
@@ -1064,7 +1066,8 @@ def pi_calculator(Uniquesample, mode):#SODA process
         aux = np.matrix(AA1)
         for i in range(UN-1): aux = np.insert(aux,0,AA1,axis=0)
         aux = np.array(aux)
-        uspi = np.sum(np.power(cdist(Uniquesample, aux, mode, p=1.5),2),1)+DT1
+        uspi = np.power(cdist(Uniquesample, aux, mode, p=1.5),2)+DT1
+        uspi = uspi[:,0]
     
     if mode == 'cosine':
         Xnorm = np.matrix(np.sqrt(np.sum(np.power(Uniquesample,2),axis=1))).T
@@ -1529,7 +1532,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
                 if decision[int (SodaOutput[i]-1)] != -1:
     
                     SelectedData[k] = SelectedFeatures[i]
-                    ClassifiersLabel [k] = decision[int (SodaOutput[i]-1)]
+                    ClassifiersLabel [k] = int(not bool(decision[int(SodaOutput[i]-1)]))
                     if k < int(SelectedFeatures.shape[0] - n_excluded - 1):
                         k += 1
 
@@ -1623,9 +1626,12 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
 
     return Output
 
-def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot_matrix=False): #Classifiers
+def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a, plot_matrix=False): #Classifiers
+    distances = ['canberra', 'chebyshev', 'cityblock', 'euclidean', 'mahalanobis', 'minkowski']
+    gra = np.arange(min_granularity,max_granularity+pace,pace)
     
     #Changing Work Folder
+    
     add_path1 = "/Classification/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
@@ -1635,43 +1641,39 @@ def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
 
-    # Change to Kernel directory
-    os.chdir(Kernel_path)
-
-    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
-
-    names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
-         "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
-         "Naive Bayes", "QDA"]
-
-
-    classifiers = [
-        KNeighborsClassifier(3),
-        SVC(gamma='scale'),
-        SVC(gamma=2, C=1),
-        GaussianProcessClassifier(1.0 * RBF(1.0)),
-        DecisionTreeClassifier(),
-        RandomForestClassifier(n_estimators=100),
-        MLPClassifier(alpha=1,max_iter=500),
-        AdaBoostClassifier(),
-        GaussianNB(),
-        QuadraticDiscriminantAnalysis()]
-    
-    Output_ID = ClassificationPar['ID']
-    distances = ClassificationPar['Distances']
-    pace = ClassificationPar['Pace']
-    gra = np.arange(min_granularity,max_granularity,pace)
-
     for d in distances:
         for g in gra:
             try:
+                # Change to Kernel directory
+                os.chdir(Kernel_path)
+                y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+
+
+                names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
+                    "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
+                    "Naive Bayes", "QDA"]
+
+
+                classifiers = [
+                    KNeighborsClassifier(3),
+                    SVC(gamma='scale'),
+                    SVC(gamma=2, C=1),
+                    GaussianProcessClassifier(1.0 * RBF(1.0)),
+                    DecisionTreeClassifier(),
+                    RandomForestClassifier(n_estimators=100),
+                    MLPClassifier(alpha=1,max_iter=500),
+                    AdaBoostClassifier(),
+                    GaussianNB(),
+                    QuadraticDiscriminantAnalysis()]
+            
+
                 # Now change to Kernel directory
                 
                 #os.chdir( Kernel_path )
-                
+    
                 #retval = os.getcwd()
                 #print ("Current working directory %s" % retval)
-                
+     
                 # preprocess dataset, split into training and test part
                 Accuracy = np.zeros((n_a, len(names)))
                 #"Y_60_euclidean_Labels_7_1.25.csv"
@@ -1680,25 +1682,22 @@ def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot
                 y_soda = np.genfromtxt(('Y_' + s), delimiter=',') 
                 X = StandardScaler().fit_transform(X)
                 X_train, X_test, y_train_soda, y_test_soda, y_train_original, y_test_original = \
-                train_test_split(X, y_soda, y_original, test_size=.4, random_state=42, stratify=y_soda)
+                    train_test_split(X, y_soda, y_original, test_size=.4, random_state=42, stratify=y_soda)
 
                 #Loop into numbeer od samples
-                for i in range(Accuracy.shape[0]): # pylint: disable=E1136  # pylint/issues/3139
+                for i in range(Accuracy.shape[0]):
                     k = 0
                     # iterate over classifiers
                     for name, clf in zip(names, classifiers):
-                    
+        
                         clf.fit(X_train, y_train_soda)
                         score = clf.score(X_test, y_test_original)
                         Accuracy[i,k] = (score*100)
                         k +=1
                         if plot_matrix:
                             ClassifiersLabel = list(clf.predict(X_test))
-                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original,plot=True)
-                            print('Claasificatiojn funfando')
-
-                        ClassifiersLabel = list(clf.predict(X_test))
-                        confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
+                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
+       
                 #Creating Matrix for Mean an Std. Derivatio
                 results = np.zeros((len(names),2))
 
@@ -1706,31 +1705,31 @@ def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot
                 for i in range(len(names)):
                     results[i,0] = round (np.mean(Accuracy[:,i]), 2 )
                     results[i,1] = round (np.std(Accuracy[:,i]), 2)
-                        
+            
                 # Now change to Grouping Analyses directory
-                
+    
                 os.chdir( Classification_path )
-                
+    
                 #retval = os.getcwd()
                 #print ("Current working directory %s" % retval)
 
                 results = pd.DataFrame(results, index = names, columns = ['Media','Desvio'])       
                 results.to_csv(("Classification_result_" + s) )
-                    
-                
+        
+    
                 print('*** {} - {} - {:.2f}  ***'.format(ClassificationPar['ID'], d, g))
                 print('-------------------------------------')
                 print(results)
                 print(' ')
-
-            except:
-                print('*** {} - {} - {:.2f}  ***'.format(Output_ID, d, g))
         
-    # Now change to base directory
-
-    os.chdir( base_path )
-    #retval = os.getcwd()
-    #print ("Current working directory %s" % retval)
+                # Now change to base directory
+    
+                os.chdir( base_path )
+                retval = os.getcwd()
+                #print ("Current working directory %s" % retval)
+            except:
+                os.chdir(base_path)
+                print('*** {} - {} - {:.2f}  ***'.format(ClassificationPar['ID'], d, g))
 
     return
 

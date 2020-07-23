@@ -6,6 +6,9 @@ recovery_decision = recovery_decision.strip()
 import Model_Functions as mf
 import numpy as np
 import pandas as pd
+from pathlib import Path
+
+path = Path(__file__).parent.absolute()
 
 if recovery_decision == 'y': #Recovering Data from previous analyse
 
@@ -169,13 +172,13 @@ if recovery_decision == 'y': #Recovering Data from previous analyse
 
                 if plot_decision == 'y':
 
-                    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                    mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                     loop += 1
                 
                 elif plot_decision == 'n':
 
-                    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                    mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                     loop += 1
 
@@ -302,13 +305,13 @@ if recovery_decision == 'y': #Recovering Data from previous analyse
 
                 if plot_decision == 'y':
 
-                    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                    mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                     loop += 1
                 
                 elif plot_decision == 'n':
 
-                    mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                    mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                     loop += 1
 
@@ -475,11 +478,11 @@ if recovery_decision == 'y': #Recovering Data from previous analyse
 
         if plot_decision == 'y':
 
-            mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+            mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
                 
         elif plot_decision == 'n':
 
-            mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+            mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
 elif recovery_decision == 'n': #New analyse
 
@@ -493,13 +496,11 @@ elif recovery_decision == 'n': #New analyse
     while loop ==0:
         
         try:
-            
-            np.genfromtxt('/home/thiago/Repositories/Lathes_Tool_Project/Model/Input/Output_' + Output_ID + '.csv', delimiter = ',')
+            np.genfromtxt('{}\\Input\\Output_{}.csv'.format(str(path),Output_ID), delimiter = ',')
             
             loop +=1
             print('__________________________________________')
-        except:
-            
+        except: 
             print('__________________________________________')
             print('\a\nCould not find this ID number, Try again or press Ctrl + C to quit.')
             Output_ID = input('\nType the ID number and press ENTER: ')
@@ -627,13 +628,13 @@ elif recovery_decision == 'n': #New analyse
 
             if plot_decision == 'y':
 
-                mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                 loop += 1
                 
             elif plot_decision == 'n':
 
-                mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+                mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
 
                 loop += 1
 
@@ -796,11 +797,11 @@ elif recovery_decision == 'n': #New analyse
 
         if plot_decision == 'y':
 
-            mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+            mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, pace, numero de vezes a simular, plotar matriz de confusão (True or False))
                 
         elif plot_decision == 'n':
 
-            mf.Classification (ClassificationPar, 2,5, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, numero de vezes a simular, plotar matriz de confusão (True or False))
+            mf.Classification (ClassificationPar, 2,5,0.25, 1, plot_matrix=True) #(Parametros do data-set,  min_grid_size, max_grid_size, pace, numero de vezes a simular, plotar matriz de confusão (True or False))
 
 else: 
 
