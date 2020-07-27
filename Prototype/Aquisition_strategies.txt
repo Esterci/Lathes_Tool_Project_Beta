@@ -1,0 +1,35 @@
+Abordagens para Aquisição
+Stm 32 + buffer externo +raspberry
+
+Stm 32 + buffer externo +raspberry
+1) Ciclo de aquisição initerrupto = aprox 35 microssegundos                    28kS/s
+Teste realizado apenas com ciclos contínuos de aquisição não levando em conta o envio. Realizado para verificar o potencial de aquisição de dados
+2) Necessidade do uso de Threads para sincronização dos processos.
+
+
+Stm 32 + buffer externo +raspberry
+
+Abordagens:
+para 15KS/s:  15KHz/60Hz = 250 Samples/ciclo
+cada ciclo 16,6ms                          1ms  --- 15 Samples
+Aquisição(16 bytes)                       Envio(16 bytes)
+Aquisição (250 Samples --- 4Kbytes)                      Envio 
+        (250 Samples --- 4Kbytes)                    16,6ms de aquisição
+	com spi 18Mbps                        aprox 2ms de transmissão
+
+                       
+
+Stm 32 + buffer externo +raspberry
+
+Com o stm32, temos 20k bytes de ram total e não consegui reservar os 4Kbytes
+Impossível amostrar a senoide completa
+seria possível se houvesse mais memória disponível
+problema com o modo spi. Raspberry só funciona em modo master. impossível a lógica: se os dados estiverem prontos, enviar
+
+
+Stm 32 + usb fifo +raspberry
+Maior flexibilidade com o uso do protocolo usb
+Drivers já existentes 
+Módulos para o python já existentes
+maior poder de bufferização
+Possibilita a abordagem de amostragem de toda senoide nas taxas de aquisição mais altas
