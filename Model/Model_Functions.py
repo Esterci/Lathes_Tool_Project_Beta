@@ -35,16 +35,17 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from tsfresh.feature_extraction import extract_features, ComprehensiveFCParameters
 import os
 import pickle
+from pathlib import Path
 
 def Recovery (DataName): #Recovery function 
 
     #Changing Work Folder
 
-    add_path1 = "/PCA_Analyses/"
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd ()
-    working_path = os.getcwd() + '/Model'
+    add_path1 = "\\PCA_Analyses"
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     PCA_Analyses_path = working_path + add_path1
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
@@ -55,21 +56,21 @@ def Recovery (DataName): #Recovery function
 
             # Now change to Kernel directory
     
-            os.chdir( Kernel_path )
+            # os.chdir( Kernel_path )
             
-            Final_Target = np.genfromtxt('FinalTarget.csv', delimiter = ',')
+            Final_Target = np.genfromtxt('{}\\FinalTarget.csv'.format(Kernel_path), delimiter = ',')
             
             # Now change to Recovery directory
         
-            os.chdir( Recovery_path )
+            # os.chdir( Recovery_path )
             
-            P_N_groups = int(np.load('M_N_groups.npy'))
-            Output_Id = int(np.load('ID.npy'))
-            P_N_Ids = int(np.load('N_IDs.npy'))
+            P_N_groups = int(np.load('{}\\M_N_groups.npy'.format(Recovery_path)))
+            Output_Id = int(np.load('{}\\ID.npy'.format(Recovery_path)))
+            P_N_Ids = int(np.load('{}\\N_IDs.npy'.format(Recovery_path)))
             
             # Now change to base directory
         
-            os.chdir( base_path )
+            # os.chdir( base_path )
             
             Output = {'FinalTarget': Final_Target,
                     'M_N_groups': P_N_groups,
@@ -92,13 +93,13 @@ def Recovery (DataName): #Recovery function
 
             # Now change to Recovery directory
         
-            os.chdir( Recovery_path )
+            # os.chdir( Recovery_path )
             
-            extracted_names = np.load('extracted_names.npy')
+            extracted_names = np.load('{}\\extracted_names.npy'.format(Recovery_path))
             
             # Now change to base directory
         
-            os.chdir( base_path )
+            # os.chdir( base_path )
             
             #retval = os.getcwd()
             #print ("Final working directory %s" % retval)
@@ -114,19 +115,19 @@ def Recovery (DataName): #Recovery function
         try:    
             # Now change to Recovery directory
         
-            os.chdir( Recovery_path )
+            # os.chdir( Recovery_path )
             
-            Output_Id = int(np.load('ID.npy'))
+            Output_Id = int(np.load('{}\\ID.npy'.format(Recovery_path)))
             
             # Now change to Kernel directory
         
-            os.chdir( Kernel_path )
+            # os.chdir( Kernel_path )
             
-            features_filtered_1 = pd.read_csv('features_filtered_' + str(Output_Id) + '.csv') 
+            features_filtered_1 = pd.read_csv('{}\\features_filtered_{}.csv'.format(Kernel_path, Output_Id)) 
             
             # Now change to base directory
         
-            os.chdir( base_path )
+            # os.chdir( base_path )
             
             Output = {'FeaturesFiltered': features_filtered_1,
                     'ID': Output_Id}
@@ -146,19 +147,19 @@ def Recovery (DataName): #Recovery function
 
             # Now change to Recovery directory
         
-            os.chdir( Recovery_path )
+            # os.chdir( Recovery_path )
             
-            Output_Id = int(np.load('ID.npy'))
+            Output_Id = int(np.load('{}\\ID.npy'.format(Recovery_path)))
             
             # Now change to PCA Analyses directory
         
-            os.chdir( PCA_Analyses_path )
+            # os.chdir( PCA_Analyses_path )
             
-            features_reduzidas = np.genfromtxt("features_reduzidas_" + str(Output_Id) + ".csv", delimiter=',')
+            features_reduzidas = np.genfromtxt("{}\\features_reduzidas_{}.csv".format(PCA_Analyses_path, Output_Id), delimiter=',')
             
             # Now change to base directory
         
-            os.chdir( base_path )
+            # os.chdir( base_path )
             
             Output = {'ReducedFeatures': features_reduzidas,
                     'ID': Output_Id}
@@ -178,19 +179,19 @@ def Recovery (DataName): #Recovery function
 
             # Now change to base directory
         
-            os.chdir( Recovery_path )
+            # os.chdir( Recovery_path )
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
             
-            Output_Id = int(np.load('ID.npy'))
-            processing_parameters = np.load(('processing_parameters.npy'), allow_pickle=True) 
+            Output_Id = int(np.load('{}\\ID.npy'.format(Recovery_path)))
+            processing_parameters = np.load(('{}\\processing_parameters.npy'.format(Recovery_path)), allow_pickle=True) 
             processing_parameters = processing_parameters.tolist() 
-            distances = np.load(('distances.npy'), allow_pickle=True) 
+            distances = np.load(('{}\\distances.npy'.format(Recovery_path)), allow_pickle=True) 
             distances = distances.tolist() 
-            min_granularity = np.load('Min_g.npy') 
-            max_granularity = np.load('Max_g.npy') 
-            pace = np.load('Pace.npy') 
+            min_granularity = np.load('{}\\Min_g.npy'.format(Recovery_path)) 
+            max_granularity = np.load('{}\\Max_g.npy'.format(Recovery_path)) 
+            pace = np.load('{}\\Pace.npy'.format(Recovery_path)) 
 
             Output = {'Distances': distances,
                     'Min_g': min_granularity,
@@ -200,7 +201,7 @@ def Recovery (DataName): #Recovery function
 
             # Now change to base directory
 
-            os.chdir( base_path ) 
+            # os.chdir( base_path ) 
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
@@ -217,16 +218,16 @@ def Recovery (DataName): #Recovery function
         
             # Now change to base directory
         
-            os.chdir( Recovery_path ) 
+            # os.chdir( Recovery_path ) 
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
             
-            Output_Id = int(np.load('ID.npy'))
-            pace = np.load("Pace.npy")
-            distances = np.load(('distances.npy'), allow_pickle=True) 
+            Output_Id = int(np.load('{}\\ID.npy'.format(Recovery_path)))
+            pace = np.load("{}\\Pace.npy".format(Recovery_path))
+            distances = np.load(('{}\\distances.npy'.format(Recovery_path)), allow_pickle=True) 
             distances = distances.tolist() 
-            define_percent = np.load('define_percent.npy')
+            define_percent = np.load('{}\\define_percent.npy'.format(Recovery_path))
             
             Output = {'Percent': define_percent,
                     'Distances': distances,
@@ -235,7 +236,7 @@ def Recovery (DataName): #Recovery function
             
             # Now change to base directory
 
-            os.chdir( base_path ) 
+            # os.chdir( base_path ) 
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
@@ -252,15 +253,15 @@ def Recovery (DataName): #Recovery function
 
             # Now change to base directory
         
-            os.chdir( Recovery_path ) 
+            # os.chdir( Recovery_path ) 
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
             
             # load the model from disk
-            model = pickle.load(open("Model.sav", 'rb'))
-            X_test = np.load('X_test.npy') 
-            y_test = np.load('y_test.npy') 
+            model = pickle.load(open("{}\\Model.sav".format(Recovery_path), 'rb'))
+            X_test = np.load('{}\\X_test.npy'.format(Recovery_path)) 
+            y_test = np.load('{}\\y_test.npy'.format(Recovery_path)) 
 
             Output = {'Model': model,
                     'X': X_test,
@@ -268,7 +269,7 @@ def Recovery (DataName): #Recovery function
             
             # Now change to base directory
 
-            os.chdir( base_path ) 
+            # os.chdir( base_path ) 
 
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
@@ -313,23 +314,23 @@ def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
     
     #Changing Work Folder
     
-    add_path1 = "/Input/"
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path1 = "\\Input"
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Input_path = working_path + add_path1
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
      
     # Now change to Input directory
     
-    os.chdir( Input_path )
+    # os.chdir( Input_path )
     
     # Loading the required input 
     
-    Full_data = np.genfromtxt('Output_' + str(int(Output_Id)) + '.csv', delimiter=',')
-    #E_data = np.genfromtxt('Eminence_Data_' + str(Output_Id) + '.csv', delimiter=',')
+    Full_data = np.genfromtxt('{}\\Output_{}.csv'.format(Input_path, Output_Id), delimiter=',')
+    #E_data = np.genfromtxt('{}\\Eminence_Data_{}.csv'.format(Input_path, Output_Id), delimiter=',')
     columns = Full_data.shape[1]
     P_data = Full_data[:,0:columns-1]
     Target = Full_data[:,columns-1]
@@ -341,7 +342,7 @@ def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
     
     # Now change to Kernel directory
           
-    os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
 
     ###______________________________________________________________________###
     ###                     ProDiMes Slicing Parameters                      ###
@@ -388,7 +389,7 @@ def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
 
         Final_Target[i] = Target [i*P_N_voos]
         
-    #np.savetxt(('Target_' + str(int(Output_Id)) + '.csv'), Final_Target, delimiter = ',')
+    #np.savetxt('{}\\Target_{}.csv'.format(Kernel_path, Output_Id), Final_Target, delimiter = ',')
     
     
     ###______________________________________________________________________###
@@ -420,7 +421,7 @@ def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
     
                         Data[(j * P_N_voos) + k,:] = P_data [(((i * id_per_group + j) * P_N_voos) + k ) ,:]
         
-            np.savetxt(('Data_' + str(i) + '.csv'), Data, delimiter = ',')
+            np.savetxt('{}\\Data_{}.csv'.format(Kernel_path, i), Data, delimiter = ',')
     
     ###______________________________________________________________________###
     ###                          Slicing Eminences                           ###
@@ -450,22 +451,22 @@ def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
                         Data[(j * E_N_voos) + k,:] = E_data [(((i * id_per_group + j) * E_N_voos) + k ) ,:]
     
     
-            np.savetxt(('Eminence_' + str(i) + '.csv'), Data, delimiter = ',')
+            np.savetxt('{}\\Eminence_{}.csv'.format(Kernel_path, i), Data, delimiter = ',')
     '''
 
-    np.savetxt(('FinalTarget.csv'), Final_Target, delimiter = ',')
+    np.savetxt('{}\\FinalTarget.csv'.format(Kernel_path), Final_Target, delimiter = ',')
     
     # Now change to Recovery directory
           
-    os.chdir( Recovery_path )
+    # os.chdir( Recovery_path )
     
-    np.save(('M_N_groups.npy'), P_N_groups)
-    np.save(('ID.npy'), Output_Id)
-    np.save(('N_IDs.npy'), P_N_Ids)
+    np.save(('{}\\M_N_groups.npy'.format(Recovery_path)), P_N_groups)
+    np.save(('{}\\ID.npy'.format(Recovery_path)), Output_Id)
+    np.save(('{}\\N_IDs.npy'.format(Recovery_path)), P_N_Ids)
     
     # Now change back to Base directory
           
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     Output = {'FinalTarget': Final_Target,
               'M_N_groups': P_N_groups,
@@ -482,16 +483,16 @@ def TSFRESH_Extraction(D_S_parameters): #TSFRESH Extraction
     
     #Changing Work Folder
     
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
         
     # Now change to Kernel directory
     
-    os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
     
     ###______________________________________________________________________###
     ###                         Feature Extraction                           ###
@@ -501,31 +502,30 @@ def TSFRESH_Extraction(D_S_parameters): #TSFRESH Extraction
     
     for i in range(P_N_groups):
         
-        Data = np.genfromtxt('Data_' + str(i) + '.csv', delimiter=',')
+        Data = np.genfromtxt('{}\\Data_{}.csv'.format(Kernel_path, i), delimiter=',')
         data = pd.DataFrame(Data, columns= ['id','time'] + ['Sensor_' + str(x) for x in range(1,(Data.shape[1]-1))])
         
         Data_extracted_features = extract_features(data,column_id = "id", column_sort="time")
         extracted_names = list(Data_extracted_features.columns)
-        np.savetxt('Data_Features_' + str(i) + '.csv', Data_extracted_features, delimiter=',')
+        np.savetxt('{}\\Data_Features_{}.csv'.format(Kernel_path, i), Data_extracted_features, delimiter=',')
         
     #for i in range(E_N_groups):
 
     
-    #    data = pd.DataFrame(np.genfromtxt('Eminence_' + str(i) + '.csv', delimiter=','), 
-    #                        columns= ['id','time','sensor_1','sensor_2','sensor_3','sensor_4',
-    #                                            'sensor_5','sensor_6','sensor_7'])
+    #    data = pd.DataFrame(np.genfromtxt('{}\\Eminence_{}.csv'.format(Kernel_path, i), delimiter=','), 
+    #                        columns= ['id','time'] + ['Sensor_' + str(x) for x in range(1,(Data.shape[1]-1))])
     #    extracted_features = extract_features(data, column_id = "id", column_sort="time")
-    #    np.savetxt('Eminence_Features_' + str(i) + '.csv', extracted_features, delimiter=',')
+    #    np.savetxt('{}\\Eminence_Features_{}.csv'.format(Kernel_path, i), extracted_features, delimiter=',')
     
     # Now change to Recovery directory
     
-    os.chdir( Recovery_path )
+    # os.chdir( Recovery_path )
     
-    np.save('extracted_names.npy',extracted_names)
+    np.save('{}\\extracted_names.npy'.format(Recovery_path),extracted_names)
     
     # Now change back to base directory
     
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     return extracted_names
 
@@ -539,24 +539,24 @@ def TSFRESH_Selection(D_S_parameters,extracted_names): #TSFRESH Selection
     
     #Changing Work Folder
     
-    add_path2 = "/.Kernel/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path2 = "\\.Kernel"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Kernel_path = working_path + add_path2
         
     # Now change back to Kernel directory
     
-    os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
     
-    Data_Matrix = np.genfromtxt('Data_Features_0.csv', delimiter=',')
+    Data_Matrix = np.genfromtxt('{}\\Data_Features_0.csv'.format(Kernel_path), delimiter=',')
     print('Data_Features_0.csv')
     print(np.shape(Data_Matrix))
 
     for i in range(1,P_N_groups):
     
-        new_data = np.genfromtxt('Data_Features_' + str(i) + '.csv', delimiter=',') 
+        new_data = np.genfromtxt('{}\\Data_Features_{}.csv'.format(Kernel_path, i), delimiter=',') 
         
-        print('Data_Features_' + str(i) + '.csv')
+        print('Data_Features_{}.csv'.format(i))
         print(np.shape(new_data))
     
         Data_Matrix = np.concatenate((Data_Matrix, new_data), axis=0)
@@ -564,11 +564,11 @@ def TSFRESH_Selection(D_S_parameters,extracted_names): #TSFRESH Selection
     
     #for i in range(E_N_groups):
     
-    #    new_data = np.genfromtxt('Eminence_Features_' + str(i) + '.csv', delimiter=',') 
+    #    new_data = np.genfromtxt('{}\\Eminence_Features_{}.csv'.format(Kernel_path, i), delimiter=',') 
     
     #    Data_Matrix = np.concatenate((Data_Matrix, new_data), axis=0)
     
-    #    print('Eminence_Features_' + str(i) + '.csv')
+    #    print('Eminence_Features_{}.csv'.format(i))
     
     features = pd.DataFrame(Data_Matrix, columns= extracted_names)
     
@@ -576,11 +576,11 @@ def TSFRESH_Selection(D_S_parameters,extracted_names): #TSFRESH Selection
     features_filtered_1 = select_features(features, y)
     features_filtered_1.sort_index(inplace = True)
     
-    features_filtered_1.to_csv('features_filtered_' + str(Output_Id) + '.csv', index=False)
+    features_filtered_1.to_csv('{}\\features_filtered_{}.csv'.format(Kernel_path, Output_Id), index=False)
     
     # Now change back to base directory
     
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     Output = {'FeaturesFiltered': features_filtered_1,
               'ID': Output_Id}
@@ -595,12 +595,12 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
         
         #Changing Work Folder
         
-        add_path1 = "/PCA_Analyses/"
-        add_path2 = "/Input/"
+        add_path1 = "\\PCA_Analyses"
+        add_path2 = "\\Input"
         #add_path3 = "/.Recovery/"
-        add_path4 = "/PCA_Analyses/Figures/"        
-        base_path = os.getcwd()
-        working_path = os.getcwd() + '/Model'
+        add_path4 = "\\PCA_Analyses\\Figures"        
+        base_path = str(os.path.abspath(''))
+        working_path = base_path + '\\Model'
         PCA_Analyses_path = working_path + add_path1
         Input_path = working_path + add_path2
         #Recovery_path = working_path + add_path3
@@ -608,7 +608,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
 
         # Now change to PCA Figures directory
 
-        os.chdir( PCA_Figures_path )
+        # os.chdir( PCA_Figures_path )
         
         print('             ')
         print('PCA Control Output')
@@ -637,7 +637,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
         ax.tick_params(axis='y', labelsize=18)
         ax.grid()
         plt.show()
-        fig.savefig('Percentage_of_Variance_Held_{}.png'.format(Output_Id), bbox_inches='tight')
+        fig.savefig('{}\\Percentage_of_Variance_Held_{}.png'.format(PCA_Figures_path, Output_Id), bbox_inches='tight')
 
         print('Variation maintained: %.2f' % variacao_percentual_pca.sum())
         print('                  ')
@@ -691,7 +691,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                         axs.label_outer()
 
                     plt.show()
-                    fig.savefig('Contribution_Percentage_Per_PC_{}.png'.format(Output_Id), bbox_inches='tight')
+                    fig.savefig('{}\\Contribution_Percentage_Per_PC_{}.png'.format(PCA_Figures_path, Output_Id), bbox_inches='tight')
 
                 if (Chose == 'Analytics'):
                     ### Análise Geral ###
@@ -797,7 +797,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     ax.grid()
 
                     plt.show()
-                    fig.savefig('Sensor_Weighted_Contribution_Percentage_{}.png'.format(Output_Id), bbox_inches='tight')
+                    fig.savefig('{}\\Sensor_Weighted_Contribution_Percentage_{}.png'.format(PCA_Figures_path, Output_Id), bbox_inches='tight')
 
                     #Ploting Cntribution Features Results
 
@@ -820,7 +820,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     ax.grid()
 
                     plt.show()
-                    fig.savefig('Features_Weighted_Contribution_Percentage_{}.png'.format(Output_Id), bbox_inches='tight')
+                    fig.savefig('{}\\Features_Weighted_Contribution_Percentage_{}.png'.format(PCA_Figures_path, Output_Id), bbox_inches='tight')
 
 
                     ### Análise Geral para os 20 primeiros PC's ###
@@ -844,7 +844,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     ax.grid()
 
                     plt.show()
-                    fig.savefig('{}th_Best_Features_Weighted_Contribution_Percentage_{}.png'.format(20,Output_Id), bbox_inches='tight')
+                    fig.savefig('{}\\{}th_Best_Features_Weighted_Contribution_Percentage_{}.png'.format(PCA_Figures_path, 20,Output_Id), bbox_inches='tight')
 
 
                     #Ploting the data of the most relevant sensor with the best features
@@ -870,13 +870,13 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     
                     # Now change to Input directory
 
-                    os.chdir( Input_path )
+                    # os.chdir( Input_path )
                     
-                    Target = np.genfromtxt('Output_' + str(Output_Id) + '.csv', delimiter=',')
+                    Target = np.genfromtxt('{}\\Output_{}.csv'.format(Input_path, Output_Id), delimiter=',')
                     
                     # Now change to PCA Figures directory
 
-                    os.chdir( PCA_Figures_path )
+                    # os.chdir( PCA_Figures_path )
                     
                     N_Mesures =int(np.amax(Target,axis=0)[1])
                     Target = Target[::N_Mesures,4]
@@ -914,7 +914,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     blue_patch = mpatches.Patch(color='blue', label='Funcional Tools')
                     plt.legend(handles=[red_patch,blue_patch],fontsize = 20)
                     plt.show()
-                    fig.savefig('ScatterPlot_PCA_{}.png'.format(Output_Id), bbox_inches='tight')
+                    fig.savefig('{}\\ScatterPlot_PCA_{}.png'.format(PCA_Figures_path, Output_Id), bbox_inches='tight')
 
 
                     default_features = np.array(['abs_energy','absolute_sum_of_changes','agg_autocorrelation','agg_linear_trend','approximate_entropy',
@@ -980,18 +980,18 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
                     
                     # Now change to PCA Analyses directory
 
-                    os.chdir( PCA_Analyses_path )
+                    # os.chdir( PCA_Analyses_path )
 
-                    unique_features_used.to_csv('unique_features_used_{}.csv'.format(Output_Id),index = False)
+                    unique_features_used.to_csv('{}\\unique_features_used_{}.csv'.format(PCA_Analyses_path, Output_Id),index = False)
 
-                    sensors_contribution.to_csv('sensors_weighted_contribution_{}.csv'.format(Output_Id), index=True)
-                    features_contribution.to_csv('features_weighted_contribution_{}.csv'.format(Output_Id), index=True)
+                    sensors_contribution.to_csv('{}\\sensors_weighted_contribution_{}.csv'.format(PCA_Analyses_path, Output_Id), index=True)
+                    features_contribution.to_csv('{}\\features_weighted_contribution_{}.csv'.format(PCA_Analyses_path, Output_Id), index=True)
 
             # Now change to PCA Analyses directory
 
-            os.chdir( PCA_Analyses_path )
+            # os.chdir( PCA_Analyses_path )
             
-            np.savetxt("features_reduzidas_" + str(Output_Id) + ".csv", features_reduzidas, delimiter=',')
+            np.savetxt("{}\\features_reduzidas_{}.csv".format(PCA_Analyses_path, Output_Id), features_reduzidas, delimiter=',')
 
             Output = {'ReducedFeatures': features_reduzidas,
                       'ID': Output_Id} 
@@ -1001,7 +1001,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
         
         # Now change back to base directory
 
-        os.chdir( base_path )
+        # os.chdir( base_path )
 
         return Output
     
@@ -1251,10 +1251,10 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
     
     #Changing Work Folder
     
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
     
@@ -1269,7 +1269,7 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
     
     # Now change to Kernel directory
     
-    os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
@@ -1295,21 +1295,21 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
             processing_parameters.append(pp)
 
             
-            np.savetxt('SODA_' + d + '_label_' + str (DataSetID) + '_' + str("%.2f" % g) + '.csv', out['IDX'],delimiter=',')
+            np.savetxt('{}\\SODA_{}_label_{}_{:.2f}.csv'.format(Kernel_path, d, DataSetID, g), out['IDX'],delimiter=',')
 
             
     # Now change to base directory
     
-    os.chdir( Recovery_path )
+    # os.chdir( Recovery_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
     
-    np.save(('processing_parameters.npy'), processing_parameters)
-    np.save(('distances.npy'), distances)
-    np.save(('Min_g.npy'), min_granularity)
-    np.save(('Max_g.npy'), max_granularity)
-    np.save(('Pace.npy'), pace)
+    np.save(('{}\\processing_parameters.npy'.format(Recovery_path)), processing_parameters)
+    np.save(('{}\\distances.npy'.format(Recovery_path)), distances)
+    np.save(('{}\\Min_g.npy'.format(Recovery_path)), min_granularity)
+    np.save(('{}\\Max_g.npy'.format(Kernel_path)), max_granularity)
+    np.save(('{}\\Pace.npy'.format(Kernel_path)), pace)
     
     Output = {'Distances': distances,
               'Min_g': min_granularity,
@@ -1319,34 +1319,30 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
     
     # Now change to base directory
     
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
     
     return Output, processing_parameters
 
-def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0, plot=False): #Confusion Matrix
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, method, classifier=0, original=[], plot=False): #Confusion Matrix
     
     #Changing Work Folder
-    
-    add_path1 = "/.Kernel/"
-    add_path2 = "/Grouping_Analyses/Images/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path1 = "\\.Kernel"
+    add_path2 = "\\Grouping_Analyses\\Figures"
+    add_path3 = "\\Classification\\Figures"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Kernel_path = working_path + add_path1
-    GA_Images_path = working_path + add_path2
-
-    #print(base_path)
-    #print(Kernel_path)
-    #print(GA_Images_path)
-     
+    GA_Figures_path = working_path + add_path2
+    Classification_Figures_path = working_path + add_path3
     # Now change to Kernel directory
     
-    #os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
 
-    if original == 0:
-        Z = np.genfromtxt('FinalTarget.csv', delimiter=',')
+    if original == []:
+        Z = np.genfromtxt('{}\\FinalTarget.csv'.format(Kernel_path), delimiter=',')
         Z_rows = Z.shape
     else:
         Z = original
@@ -1356,17 +1352,17 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
     Y = ClassifiersLabel
     Y_rows = Y.shape
 
-    if type == 'SODA':
+    if method == 'SODA':
         y_label = ['Adequate Condition', 'Inadequate Condition']
         x_label = ['Adequate Condition SODA', 'Inadequate Condition SODA']
         title = 'SODA - {} - {} - {:.2f}'. format(DataSet_ID, d, g)
-        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(type, DataSet_ID, d, g)
+        file_title = '{}\\Confusion_matrix_{}_{}_{}_{}.png'.format(GA_Figures_path, method, DataSet_ID, d, g)
 
-    if type == 'Classifiers':
+    if method == 'Classifiers':
         y_label = ['Adequate Condition', 'Inadequate Condition']
         x_label = ['Adequate Condition Predction', 'Inadequate Condition Prediction']
         title = '{} - {} - {} - {:.2f}'. format(classifier, DataSet_ID, d, g)
-        file_title = 'Confusion_matrix_{}_{}_{}_{}.png'.format(classifier, DataSet_ID, d, g)
+        file_title = '{}\\Confusion_matrix_{}_{}_{}_{}.png'.format(Classification_Figures_path, classifier, DataSet_ID, d, g)
 
     if Z_rows == Y_rows:
         matrix = metrics.confusion_matrix(Z, Y)
@@ -1383,27 +1379,28 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
             print('confusionmat funcando')
 
         # Now change to Images directory
-        os.chdir(GA_Images_path)
+        # os.chdir(GA_Figures_path)
     
         fig.savefig(file_title, bbox_inches='tight')
+        plt.close('all')
 
         # Go back do .Kernel directory
-        os.chdir(Kernel_path)
+        # os.chdir(Kernel_path)
 
 def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #Grouping Algorithm
     
     #Changing Work Folder
     
-    add_path1 = "/PCA_Analyses/"
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    add_path4 = "/Grouping_Analyses/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path1 = "\\PCA_Analyses"
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    add_path4 = "\\Grouping_Analyses"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     PCA_Analyses_path = working_path + add_path1
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
-    Grouping_Analyses_path = working_path + add_path4
+    GA_path = working_path + add_path4
     
     print('             ')
     print('Grouping Algorithm Control Output')
@@ -1418,9 +1415,9 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
     distances = SODA_parameters['Distances']
 
     # Change to Kernel directory
-    os.chdir(Kernel_path)
+    # os.chdir(Kernel_path)
 
-    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+    y_original = np.genfromtxt('{}\\FinalTarget.csv'.format(Kernel_path), delimiter=',')
 
     n_IDs_gp0 = 0
 
@@ -1440,28 +1437,29 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
             time_cpu_thread = cpu_usage()
             time_cpu_thread.start()
     
-            s = 'SODA_' + d + '_label_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv'
+            s = 'SODA_{}_label_{}_{:.2f}.csv'.format(d, DataSetID, g)
+            s_path = '{}\\SODA_{}_label_{}_{:.2f}.csv'.format(Kernel_path, d, DataSetID, g)
             
 
             #### Data-base Imput ####
             
             # Now change to Kernel directory
     
-            os.chdir( Kernel_path )
+            # os.chdir( Kernel_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
 
-            SodaOutput = np.genfromtxt( s , delimiter=',')
+            SodaOutput = np.genfromtxt( s_path , delimiter=',')
             
             # Now change to PCA Analyses directory
     
-            os.chdir( PCA_Analyses_path )
+            # os.chdir( PCA_Analyses_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
             
-            SelectedFeatures = np.genfromtxt('features_reduzidas_' + str(DataSetID) + '.csv' , delimiter=',')
+            SelectedFeatures = np.genfromtxt('{}\\features_reduzidas_{}.csv'.format(PCA_Analyses_path, DataSetID), delimiter=',')
 
             #### Program Matrix's and Variables ####
 
@@ -1547,13 +1545,13 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
             
             # Now change to Kernel directory
     
-            os.chdir( Kernel_path )
+            # os.chdir( Kernel_path )
     
             #retval = os.getcwd()
             #print ("Current working directory %s" % retval)
-
-            np.savetxt('X_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', SelectedData, delimiter=',')
-            np.savetxt('Y_' + str(define_percent) + '_' + d + '_Labels_' + str(DataSetID) + '_' + str("%.2f" % g) + '.csv', ClassifiersLabel, delimiter=',')
+            
+            np.savetxt('{}\\X_{}_{}_Labels_{}_{:.2f}.csv'.format(Kernel_path, define_percent, d, DataSetID, g), SelectedData, delimiter=',')
+            np.savetxt('{}\\Y_{}_{}_Labels_{}_{:.2f}.csv'.format(Kernel_path, define_percent, d, DataSetID, g), ClassifiersLabel, delimiter=',')
     
             ### Interrupt Thread and recalculate parameters
             time_cpu_thread.stop()
@@ -1580,15 +1578,15 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
             print('Data representation loss: %.2f' % (100-((SelectedData.shape[0] / SelectedFeatures.shape[0]) * 100))) # pylint: disable=E1136  # pylint/issues/3139
             print('Analyse execution time: %.6f segundos' % totaltime)
             print('Avarage CPU usage: %.2f' % cpu_percent)
+            confusionmatrix(DataSetID, d, g, ClassifiersLabel, 'SODA', plot=False)
             print('---------------------------------------------------')
             
             #### Saving Processed Data, ID's and Percentage
             
             # Now change to Kernel directory
     
-            os.chdir( Grouping_Analyses_path )
-            
-            Grouping_Analyse = open("Grouping_Analyse_ID_" + str(DataSetID) + "_min_" + str(min_granularity) + "_max_" + str(max_granularity) + '_' + str(define_percent) +"%.txt","w+")
+            # os.chdir( Grouping_Analyses_path )
+            Grouping_Analyse = open("{}\\Grouping_Analyse_ID_{}_min_{}_max_{}_{}%.txt".format(GA_path, DataSetID, min_granularity, max_granularity, define_percent),"w+")
             Grouping_Analyse.write(s)
             Grouping_Analyse.write('\nNumber of data clouds: %d\n' % n_DA_planes)
             Grouping_Analyse.write('Number of good tools groups: %d\n' % n_gp0)
@@ -1608,9 +1606,9 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
     
     # Now change to base directory
     
-    os.chdir( Recovery_path )
+    # os.chdir( Recovery_path )
 
-    np.save("define_percent.npy",define_percent)
+    np.save("{}\\define_percent.npy".format(Recovery_path),define_percent)
     
     Output = {'Percent': define_percent,
               'Distances': distances,
@@ -1619,7 +1617,7 @@ def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #
     
     # Now change to base directory
     
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
@@ -1632,21 +1630,19 @@ def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a
     
     #Changing Work Folder
     
-    add_path1 = "/Classification/"
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path1 = "\\Classification"
+    add_path2 = "\\.Kernel"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Classification_path = working_path + add_path1
     Kernel_path = working_path + add_path2
-    Recovery_path = working_path + add_path3
 
     for d in distances:
         for g in gra:
             try:
                 # Change to Kernel directory
-                os.chdir(Kernel_path)
-                y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+                # os.chdir(Kernel_path)
+                y_original = np.genfromtxt('{}\\FinalTarget.csv'.format(Kernel_path), delimiter=',')
 
 
                 names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
@@ -1677,15 +1673,15 @@ def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a
                 # preprocess dataset, split into training and test part
                 Accuracy = np.zeros((n_a, len(names)))
                 #"Y_60_euclidean_Labels_7_1.25.csv"
-                s = str (int(ClassificationPar['Percent'] )) + '_' + d + '_Labels_' + str(int(ClassificationPar['ID'])) + '_' + str("%.2f" % g) + '.csv'
-                X = np.genfromtxt(('X_' + s) , delimiter=',')    
-                y_soda = np.genfromtxt(('Y_' + s), delimiter=',') 
+                s = '{}_{}_Labels_{}_{:.2f}.csv'.format(ClassificationPar['Percent'], d, ClassificationPar['ID'], g)
+                X = np.genfromtxt('{}\\X_{}'.format(Kernel_path, s) , delimiter=',')    
+                y_soda = np.genfromtxt('{}\\Y_{}'.format(Kernel_path, s), delimiter=',') 
                 X = StandardScaler().fit_transform(X)
                 X_train, X_test, y_train_soda, y_test_soda, y_train_original, y_test_original = \
                     train_test_split(X, y_soda, y_original, test_size=.4, random_state=42, stratify=y_soda)
 
                 #Loop into numbeer od samples
-                for i in range(Accuracy.shape[0]):
+                for i in range(n_a):
                     k = 0
                     # iterate over classifiers
                     for name, clf in zip(names, classifiers):
@@ -1694,8 +1690,8 @@ def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a
                         score = clf.score(X_test, y_test_original)
                         Accuracy[i,k] = (score*100)
                         k +=1
-                        if plot_matrix:
-                            ClassifiersLabel = list(clf.predict(X_test))
+                        if plot_matrix and i == 0:
+                            ClassifiersLabel = np.array(clf.predict(X_test))
                             confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
        
                 #Creating Matrix for Mean an Std. Derivatio
@@ -1708,13 +1704,13 @@ def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a
             
                 # Now change to Grouping Analyses directory
     
-                os.chdir( Classification_path )
+                # os.chdir( Classification_path )
     
                 #retval = os.getcwd()
                 #print ("Current working directory %s" % retval)
 
                 results = pd.DataFrame(results, index = names, columns = ['Media','Desvio'])       
-                results.to_csv(("Classification_result_" + s) )
+                results.to_csv("{}\\Classification_result_{}".format(Classification_path, s) )
         
     
                 print('*** {} - {} - {:.2f}  ***'.format(ClassificationPar['ID'], d, g))
@@ -1724,11 +1720,11 @@ def Classification (ClassificationPar, min_granularity,max_granularity, pace,n_a
         
                 # Now change to base directory
     
-                os.chdir( base_path )
-                retval = os.getcwd()
+                # os.chdir( base_path )
+                # retval = os.getcwd()
                 #print ("Current working directory %s" % retval)
             except:
-                os.chdir(base_path)
+                # os.chdir(base_path)
                 print('*** {} - {} - {:.2f}  ***'.format(ClassificationPar['ID'], d, g))
 
     return
@@ -1737,10 +1733,10 @@ def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
     
     #Changing Work Folder
     
-    add_path2 = "/.Kernel/"
-    add_path3 = "/.Recovery/"
-    base_path = os.getcwd()
-    working_path = os.getcwd() + '/Model'
+    add_path2 = "\\.Kernel"
+    add_path3 = "\\.Recovery"
+    base_path = str(os.path.abspath(''))
+    working_path = base_path + '\\Model'
     Kernel_path = working_path + add_path2
     Recovery_path = working_path + add_path3
 
@@ -1767,29 +1763,29 @@ def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
             
     # Now change to Kernel directory
     
-    os.chdir( Kernel_path )
+    # os.chdir( Kernel_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
 
     
-    s = str (int(ClassificationPar['Percent'] )) + '_' + d + '_Labels_' + str(int(ClassificationPar['ID'])) + '_' + str("%.2f" % g) + '.csv'
-    X = np.genfromtxt(('X_' + s) , delimiter=',')    
-    y = np.genfromtxt(('Y_' + s), delimiter=',') 
+    s = '{}_{}_Labels_{}_{:.2f}.csv'.format(ClassificationPar['Percent'], d, ClassificationPar['ID'], g)
+    X = np.genfromtxt('{}\\X_{}'.format(Kernel_path, s) , delimiter=',')    
+    y= np.genfromtxt('{}\\Y_{}'.format(Kernel_path, s), delimiter=',')
     X = StandardScaler().fit_transform(X)
     X_train, X_test, y_train, y_test = \
-    train_test_split(X, y, test_size=.4, random_state=42)
+        train_test_split(X, y, test_size=.4, random_state=42)
     
     model.fit(X_train, y_train)
     
     # Now change to Kernel directory
     
-    os.chdir( Recovery_path )
+    # os.chdir( Recovery_path )
     
     # save the model to disk
-    pickle.dump(model, open("Model.sav", 'wb'))
+    pickle.dump(model, open("{}\\Model.sav".format(Recovery_path), 'wb'))
             
-    Model_Summit = open("Model_Summit.txt","w+")
+    Model_Summit = open("{}\\Model_Summit.txt".format(Recovery_path),"w+")
     Model_Summit.write('Data-Set: %d\n' % int(ClassificationPar['ID']))
     Model_Summit.write('Distance: ' + d)
     Model_Summit.write('\nClassifier: ' + Model_Name)
@@ -1797,8 +1793,8 @@ def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
             
     Model_Summit.close()
     
-    np.save('X_test.npy', X_test)
-    np.save('y_test.npy', y_test)
+    np.save('{}\\X_test.npy'.format(Recovery_path), X_test)
+    np.save('{}\\y_test.npy'.format(Recovery_path), y_test)
     
     Output = {'Model': model,
               'X': X_test,
@@ -1806,7 +1802,7 @@ def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
     
     # Now change to base directory
     
-    os.chdir( base_path )
+    # os.chdir( base_path )
     
     #retval = os.getcwd()
     #print ("Current working directory %s" % retval)
