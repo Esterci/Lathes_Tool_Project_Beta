@@ -1,13 +1,13 @@
-SODA_mahalanobis_label_3_2.00.csv
-Number of data clouds: 3
+SODA_canberra_label_3_3.50.csv
+Number of data clouds: 4
 Number of good tools groups: 2
-Number of worn tools groups: 1
+Number of worn tools groups: 2
 Number of excluded data clouds: 0
 Number of samples: 37
 Number of good tools samples: 20
 Number of worn tools samples: 17
 Number of excluded samples: 0
 Data representation loss: 0.00
-Analyse execution time: 2.018714 segundos
-Avarage CPU usage: 22.38
+Analyse execution time: 2.010235 segundos
+Avarage CPU usage: 31.80
 ---------------------------------------------------

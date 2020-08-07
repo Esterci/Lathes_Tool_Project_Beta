@@ -36,214 +36,253 @@ from tsfresh.feature_extraction import extract_features, ComprehensiveFCParamete
 import os
 import pickle
 
-#Recovery function 
+def Recovery (DataName): #Recovery function 
 
-def Recovery (DataName):
-    
     #Changing Work Folder
-    
+
     add_path1 = "/PCA_Analyses/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    PCA_Analyses_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd ()
+    working_path = os.getcwd() + '/Model'
+    PCA_Analyses_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
     
     if DataName == 'D_S_parameters':
-        
-        # Now change to Kernel directory
+
+        try:
+
+            # Now change to Kernel directory
     
-        os.chdir( Kernel_path )
+            os.chdir( Kernel_path )
+            
+            Final_Target = np.genfromtxt('FinalTarget.csv', delimiter = ',')
+            
+            # Now change to Recovery directory
         
-        Final_Target = np.genfromtxt('FinalTarget.csv', delimiter = ',')
+            os.chdir( Recovery_path )
+            
+            P_N_groups = int(np.load('M_N_groups.npy'))
+            Output_Id = int(np.load('ID.npy'))
+            P_N_Ids = int(np.load('N_IDs.npy'))
+            
+            # Now change to base directory
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+            os.chdir( base_path )
+            
+            Output = {'FinalTarget': Final_Target,
+                    'M_N_groups': P_N_groups,
+                    'ID': Output_Id,
+                    'N_IDs': P_N_Ids}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+            print("D_S_parameters Recovered!")
         
-        P_N_groups = int(np.load('M_N_groups.npy'))
-        Output_Id = int(np.load('ID.npy'))
-        P_N_Ids = int(np.load('N_IDs.npy'))
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'FinalTarget': Final_Target,
-                  'M_N_groups': P_N_groups,
-                  'ID': Output_Id,
-                  'N_IDs': P_N_Ids}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            return Output
+            
+        except:
+
+            print("D_S_parameters not recovered =(" + '\033[0m')
     
     elif DataName == 'ExtractedNames':
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+        try:
+
+            # Now change to Recovery directory
         
-        extracted_names = np.load('extracted_names.npy')
+            os.chdir( Recovery_path )
+            
+            extracted_names = np.load('extracted_names.npy')
+            
+            # Now change to base directory
         
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-    
-        return extracted_names
-    
+            os.chdir( base_path )
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+
+            print("ExtractedNames recovered!")
+            return extracted_names
+
+        except:
+            print('\033[93m' + "ExtractedNames not recovered =(" + '\033[0m')
+                 
     elif DataName == 'SelectedFeatures':
+
+        try:    
+            # Now change to Recovery directory
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+            os.chdir( Recovery_path )
+            
+            Output_Id = int(np.load('ID.npy'))
+            
+            # Now change to Kernel directory
         
-        Output_Id = int(np.load('ID.npy'))
+            os.chdir( Kernel_path )
+            
+            features_filtered_1 = pd.read_csv('features_filtered_' + str(Output_Id) + '.csv') 
+            
+            # Now change to base directory
         
-        # Now change to Kernel directory
-    
-        os.chdir( Kernel_path )
-        
-        features_filtered_1 = pd.read_csv('features_filtered_' + str(Output_Id) + '.csv') 
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'FeaturesFiltered': features_filtered_1,
-                  'ID': Output_Id}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            os.chdir( base_path )
+            
+            Output = {'FeaturesFiltered': features_filtered_1,
+                    'ID': Output_Id}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+
+            print("SelectedFeatures recovered!")            
+            return Output
+
+        except:
+            print('\033[93m' + "SelectedFeatures not recovered =(" + '\033[0m')
         
     elif DataName == 'ReducedFeatures':
         
-        # Now change to Recovery directory
-    
-        os.chdir( Recovery_path )
+        try:
+
+            # Now change to Recovery directory
         
-        Output_Id = int(np.load('ID.npy'))
+            os.chdir( Recovery_path )
+            
+            Output_Id = int(np.load('ID.npy'))
+            
+            # Now change to PCA Analyses directory
         
-        # Now change to PCA Analyses directory
-    
-        os.chdir( PCA_Analyses_path )
+            os.chdir( PCA_Analyses_path )
+            
+            features_reduzidas = np.genfromtxt("features_reduzidas_" + str(Output_Id) + ".csv", delimiter=',')
+            
+            # Now change to base directory
         
-        features_reduzidas = np.genfromtxt("features_reduzidas_" + str(Output_Id) + ".csv", delimiter=',')
-        
-        # Now change to base directory
-    
-        os.chdir( base_path )
-        
-        Output = {'ReducedFeatures': features_reduzidas,
-                  'ID': Output_Id}
-        
-        #retval = os.getcwd()
-        #print ("Final working directory %s" % retval)
-        
-        return Output
+            os.chdir( base_path )
+            
+            Output = {'ReducedFeatures': features_reduzidas,
+                    'ID': Output_Id}
+            
+            #retval = os.getcwd()
+            #print ("Final working directory %s" % retval)
+            
+            print("ReducedFeatures recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ReducedFeatures not recovered =(" + '\033[0m')
         
     elif DataName == 'SODA_parameters_processing_parameters':
         
-        # Now change to base directory
-    
-        os.chdir( Recovery_path )
+        try:
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            # Now change to base directory
         
-        Output_Id = int(np.load('ID.npy'))
-        processing_parameters = np.load(('processing_parameters.npy'), allow_pickle=True) 
-        processing_parameters = processing_parameters.tolist() 
-        distances = np.load(('distances.npy'), allow_pickle=True) 
-        distances = distances.tolist() 
-        min_granularity = np.load('Min_g.npy') 
-        max_granularity = np.load('Max_g.npy') 
-        pace = np.load('Pace.npy') 
+            os.chdir( Recovery_path )
 
-        Output = {'Distances': distances,
-                  'Min_g': min_granularity,
-                  'Max_g': max_granularity,
-                  'Pace': pace,
-                  'ID': Output_Id}
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            Output_Id = int(np.load('ID.npy'))
+            processing_parameters = np.load(('processing_parameters.npy'), allow_pickle=True) 
+            processing_parameters = processing_parameters.tolist() 
+            distances = np.load(('distances.npy'), allow_pickle=True) 
+            distances = distances.tolist() 
+            min_granularity = np.load('Min_g.npy') 
+            max_granularity = np.load('Max_g.npy') 
+            pace = np.load('Pace.npy') 
 
-        # Now change to base directory
+            Output = {'Distances': distances,
+                    'Min_g': min_granularity,
+                    'Max_g': max_granularity,
+                    'Pace': pace,
+                    'ID': Output_Id}
 
-        os.chdir( base_path ) 
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            os.chdir( base_path ) 
 
-        return Output, processing_parameters
-        
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+
+            print("SODA_parameters_processing_parameters recovered!")
+            return Output, processing_parameters
+
+        except:
+            print('\033[93m' + "SODA_parameters_processing_parameters not recovered =(" + '\033[0m')
+                
     elif DataName == 'ClassificationPar':
-        
-        # Now change to base directory
-    
-        os.chdir( Recovery_path ) 
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+        try:
         
-        Output_Id = int(np.load('ID.npy'))
-        pace = np.load("Pace.npy")
-        distances = np.load(('distances.npy'), allow_pickle=True) 
-        distances = distances.tolist() 
-        define_percent = np.load('define_percent.npy')
+            # Now change to base directory
         
-        Output = {'Percent': define_percent,
-                'Distances': distances,
-                'Pace': pace,
-                'ID': Output_Id}
-        
-        # Now change to base directory
+            os.chdir( Recovery_path ) 
 
-        os.chdir( base_path ) 
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            Output_Id = int(np.load('ID.npy'))
+            pace = np.load("Pace.npy")
+            distances = np.load(('distances.npy'), allow_pickle=True) 
+            distances = distances.tolist() 
+            define_percent = np.load('define_percent.npy')
+            
+            Output = {'Percent': define_percent,
+                    'Distances': distances,
+                    'Pace': pace,
+                    'ID': Output_Id}
+            
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
-        
-        return Output
-    
+            os.chdir( base_path ) 
+
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            print("ClassificationPar recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ClassificationPar not recovered =(" + '\033[0m')    
+
     elif DataName == 'ModelPar':
         
-        # Now change to base directory
-    
-        os.chdir( Recovery_path ) 
+        try:
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
+            # Now change to base directory
         
-        # load the model from disk
-        model = pickle.load(open("Model.sav", 'rb'))
-        X_test = np.load('X_test.npy') 
-        y_test = np.load('y_test.npy') 
+            os.chdir( Recovery_path ) 
 
-        Output = {'Model': model,
-                  'X': X_test,
-                  'Y': y_test}
-        
-        # Now change to base directory
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            # load the model from disk
+            model = pickle.load(open("Model.sav", 'rb'))
+            X_test = np.load('X_test.npy') 
+            y_test = np.load('y_test.npy') 
 
-        os.chdir( base_path ) 
+            Output = {'Model': model,
+                    'X': X_test,
+                    'Y': y_test}
+            
+            # Now change to base directory
 
-        #retval = os.getcwd()
-        #print ("Current working directory %s" % retval)
-        
-        return Output 
+            os.chdir( base_path ) 
+
+            #retval = os.getcwd()
+            #print ("Current working directory %s" % retval)
+            
+            print("ModelPar recovered!")
+            return Output
+
+        except:
+            print('\033[93m' + "ModelPar not recovered =(" + '\033[0m')   
         
     else:
-        print("Wrong name lad/lass, please check de Recovery input")
+        print('\033[93m' + "Wrong name lad/lass, please check de Recovery input" + '\033[0m')
 
-#Normalization
-
-def scale(X, x_min, x_max):
+def scale(X, x_min, x_max): #Normalization
 
     nom = (X-X.min(axis=0))*(x_max-x_min)
     denom = X.max(axis=0) - X.min(axis=0)
@@ -251,9 +290,7 @@ def scale(X, x_min, x_max):
         denom = 1
     return x_min + nom/denom
    
-#Plot Formater
-
-def format_func(value, tick_number):
+def format_func(value, tick_number): #Plot Formater
     # find number of multiples of pi/2
     N = int(value)
     if N == 0:
@@ -269,9 +306,7 @@ def format_func(value, tick_number):
     elif N == 250:
         return "X250"
 
-#Data Slicer
-
-def DataSlicer (Output_Id, id_per_group, Choice):
+def DataSlicer (Output_Id, id_per_group, Choice): #Data Slicer
     
     print('Data Slicer Control Output')
     print('----------------------------------')
@@ -281,10 +316,11 @@ def DataSlicer (Output_Id, id_per_group, Choice):
     add_path1 = "/Input/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Input_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Input_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
      
     # Now change to Input directory
     
@@ -438,9 +474,7 @@ def DataSlicer (Output_Id, id_per_group, Choice):
     
     return Output
 
-#TSFRESH
-
-def TSFRESH_Extraction(D_S_parameters):
+def TSFRESH_Extraction(D_S_parameters): #TSFRESH Extraction
     
     print('             ')
     print('TSFRESH Control Output')
@@ -450,16 +484,17 @@ def TSFRESH_Extraction(D_S_parameters):
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
         
     # Now change to Kernel directory
     
     os.chdir( Kernel_path )
     
     ###______________________________________________________________________###
-    ###                         Feature Extraction                          ###
+    ###                         Feature Extraction                           ###
 
     #E_N_groups = np.load('E_N_groups.npy')
     P_N_groups = D_S_parameters['M_N_groups']
@@ -494,7 +529,7 @@ def TSFRESH_Extraction(D_S_parameters):
     
     return extracted_names
 
-def TSFRESH_Selection(D_S_parameters,extracted_names):   
+def TSFRESH_Selection(D_S_parameters,extracted_names): #TSFRESH Selection
     ###______________________________________________________________________###
     ###                          Feature Selection                           ###
     
@@ -505,8 +540,9 @@ def TSFRESH_Selection(D_S_parameters,extracted_names):
     #Changing Work Folder
     
     add_path2 = "/.Kernel/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
         
     # Now change back to Kernel directory
     
@@ -551,9 +587,7 @@ def TSFRESH_Selection(D_S_parameters,extracted_names):
     
     return Output
 
-#PCA
-
-def PCA_calc (SelectedFeatures,N_PCs,Chose):
+def PCA_calc (SelectedFeatures,N_PCs,Chose):#PCA
     
     #%matplotlib%
 
@@ -565,11 +599,12 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):
         add_path2 = "/Input/"
         #add_path3 = "/.Recovery/"
         add_path4 = "/PCA_Analyses/Figures/"        
-        base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-        PCA_Analyses_path = base_path + add_path1
-        Input_path = base_path + add_path2
-        #Recovery_path = base_path + add_path3
-        PCA_Figures_path = base_path + add_path4
+        base_path = os.getcwd()
+        working_path = os.getcwd() + '/Model'
+        PCA_Analyses_path = working_path + add_path1
+        Input_path = working_path + add_path2
+        #Recovery_path = working_path + add_path3
+        PCA_Figures_path = working_path + add_path4
 
         # Now change to PCA Figures directory
 
@@ -974,10 +1009,7 @@ def PCA_calc (SelectedFeatures,N_PCs,Chose):
         print("Wrong Choose entry, verify this input.")
         return
 
-#SODA
-
-### Thread to calculate duration and mean cpu percente usage in a SODA classifier
-class cpu_usage(threading.Thread):
+class cpu_usage(threading.Thread):### Thread to calculate duration and mean cpu percente usage in a SODA classifier
     def __init__(self):
         threading.Thread.__init__(self)
         self.control = True
@@ -998,7 +1030,7 @@ class cpu_usage(threading.Thread):
         threading.Thread.join(self)
         return self.deltatime, self.mean_cpu
 
-def grid_set(data, N):
+def grid_set(data, N): #SODA process
     _ , W = data.shape
     AvD1 = data.mean(0)
     X1 = np.mean(np.sum(np.power(data,2),axis=1))
@@ -1014,7 +1046,7 @@ def grid_set(data, N):
     grid_angl = np.sqrt(1-AvD2*AvD2.T)/N
     return X1, AvD1, AvD2, grid_trad, grid_angl
 
-def pi_calculator(Uniquesample, mode):
+def pi_calculator(Uniquesample, mode):#SODA process
     UN, W = Uniquesample.shape
     if mode == 'euclidean' or mode == 'mahalanobis' or mode == 'cityblock' or mode == 'chebyshev' or mode == 'canberra':
         AA1 = Uniquesample.mean(0)
@@ -1050,7 +1082,7 @@ def pi_calculator(Uniquesample, mode):
         
     return uspi
 
-def Globaldensity_Calculator(data, distancetype):
+def Globaldensity_Calculator(data, distancetype):#SODA process
     
     Uniquesample, J, K = np.unique(data, axis=0, return_index=True, return_inverse=True)
     Frequency, _ = np.histogram(K,bins=len(J))
@@ -1070,7 +1102,7 @@ def Globaldensity_Calculator(data, distancetype):
  
     return GD, Uniquesample, Frequency
 
-def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distancetype):
+def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distancetype):#SODA process
     L, W = Uniquesample.shape
     if distancetype == 'euclidean':
         W = 1
@@ -1113,7 +1145,7 @@ def chessboard_division(Uniquesample, MMtypicality, interval1, interval2, distan
 
     return BOX, BOX_miu, BOX_X, BOX_S, BOXMT, NB
 
-def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distancetype):
+def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distancetype):#SODA process
     Centers = []
     n = 2
     ModeNumber = 0
@@ -1138,7 +1170,7 @@ def ChessBoard_PeakIdentification(BOX_miu,BOXMT,NB,Internval1,Internval2, distan
 
     return Centers, ModeNumber
 
-def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,grid_angl, distancetype):
+def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,grid_angl, distancetype):#SODA process
     L, W = Uniquesample.shape
     Membership = np.zeros((L,ModelNumber))
     Members = np.zeros((L,ModelNumber*W))
@@ -1168,7 +1200,7 @@ def cloud_member_recruitment(ModelNumber,Center_samples,Uniquesample,grid_trad,g
     B = [x+1 for x in B]
     return Members,MemberNumber,Membership,B
 
-def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):
+def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):#SODA process
     
     """
     Self-organising Direction-Aware Data Partitioning (offline version)
@@ -1212,15 +1244,16 @@ def SelfOrganisedDirectionAwareDataPartitioning(Input, Mode):
            
     return Output
 
-def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
+def SODA (ReducedFeatures, min_granularity, max_granularity, pace):#SODA
     
     #Changing Work Folder
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
     
     DataSetID = ReducedFeatures['ID']
     data = ReducedFeatures['ReducedFeatures']
@@ -1290,17 +1323,16 @@ def SODA (ReducedFeatures, min_granularity, max_granularity, pace):
     
     return Output, processing_parameters
 
-#Confusion Matrix
-
-def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0):
+def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, original=0, plot=False): #Confusion Matrix
     
     #Changing Work Folder
     
     add_path1 = "/.Kernel/"
     add_path2 = "/Grouping_Analyses/Images/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path1
-    GA_Images_path = base_path + add_path2
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path1
+    GA_Images_path = working_path + add_path2
 
     #print(base_path)
     #print(Kernel_path)
@@ -1342,7 +1374,10 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
         sn.heatmap(df_cm, annot=True, annot_kws={"size": 20}, fmt='d')
 
         plt.title(title, fontsize=30)
-        plt.show()
+
+        if plot:
+            plt.show()
+            print('confusionmat funcando')
 
         # Now change to Images directory
         os.chdir(GA_Images_path)
@@ -1352,9 +1387,7 @@ def confusionmatrix(DataSet_ID, d, g, ClassifiersLabel, type, classifier=0, orig
         # Go back do .Kernel directory
         os.chdir(Kernel_path)
 
-#Grouping Algorithm
-
-def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_parameters):
+def GroupingAlgorithm (SODA_parameters,define_percent, processing_parameters): #Grouping Algorithm
     
     #Changing Work Folder
     
@@ -1362,11 +1395,12 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
     add_path4 = "/Grouping_Analyses/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    PCA_Analyses_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
-    Grouping_Analyses_path = base_path + add_path4
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    PCA_Analyses_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
+    Grouping_Analyses_path = working_path + add_path4
     
     print('             ')
     print('Grouping Algorithm Control Output')
@@ -1379,6 +1413,19 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
     max_granularity = SODA_parameters['Max_g']
     pace = SODA_parameters['Pace']
     distances = SODA_parameters['Distances']
+
+    # Change to Kernel directory
+    os.chdir(Kernel_path)
+
+    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
+
+    n_IDs_gp0 = 0
+
+    for i in range (y_original.shape[0]):
+
+        if y_original[i] == 0:
+            n_IDs_gp0 += 1
+
     # functional engines
     #n_IDs_gp1 = 0 # non-functional engines
     #n_IDs_gp2 = 3598 # eminent  fault  engines
@@ -1576,23 +1623,22 @@ def GroupingAlgorithm (SODA_parameters,define_percent,n_IDs_gp0, processing_para
 
     return Output
 
-#Classifiers
-
-def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plot_matrix=False):
+def Classification (ClassificationPar, min_granularity,max_granularity,n_a, plot_matrix=False): #Classifiers
     
     #Changing Work Folder
     add_path1 = "/Classification/"
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Classification_path = base_path + add_path1
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Classification_path = working_path + add_path1
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
 
     # Change to Kernel directory
     os.chdir(Kernel_path)
-    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
 
+    y_original = np.genfromtxt('FinalTarget.csv', delimiter=',')
 
     names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
@@ -1648,8 +1694,11 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
                         k +=1
                         if plot_matrix:
                             ClassifiersLabel = list(clf.predict(X_test))
-                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
-                
+                            confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original,plot=True)
+                            print('Claasificatiojn funfando')
+
+                        ClassifiersLabel = list(clf.predict(X_test))
+                        confusionmatrix(ClassificationPar['ID'], d, g, ClassifiersLabel, 'Classifiers', name, y_test_original)
                 #Creating Matrix for Mean an Std. Derivatio
                 results = np.zeros((len(names),2))
 
@@ -1685,17 +1734,16 @@ def Classification (ClassificationPar, min_granularity,max_granularity, n_a, plo
 
     return
 
-#Model Training
-
-def Model_Train (ClassificationPar,d, Model_Name, g):
+def Model_Train (ClassificationPar,d, Model_Name, g): #Model Training
     
     #Changing Work Folder
     
     add_path2 = "/.Kernel/"
     add_path3 = "/.Recovery/"
-    base_path = "/home/thiago/Repositories/Lathes_Tool_Project/Model"
-    Kernel_path = base_path + add_path2
-    Recovery_path = base_path + add_path3
+    base_path = os.getcwd()
+    working_path = os.getcwd() + '/Model'
+    Kernel_path = working_path + add_path2
+    Recovery_path = working_path + add_path3
 
     names = ["Nearest Neighbors", "SVM", "Gaussian Process",
          "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
@@ -1766,8 +1814,6 @@ def Model_Train (ClassificationPar,d, Model_Name, g):
 
 
     return Output
-
-#Model Prediction
 
 def Model_Predict (ModelPar):
     for i in range (ModelPar['Y'].shape[0]):
