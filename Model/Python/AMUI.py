@@ -135,7 +135,7 @@ if recovery_decision == 'y': #Recovering Data from previous analyse
             
             pace = float(input('\nChoose the SODA pace for grid size.\nType a number and press ENTER: '))
         
-            SODA_parameters, processing_parameters = mf.SODA(ReducedFeatures,min_g,(max_g + pace),pace) # (Features reduzidas, granularidade mínima, granularidade máxima, passo)
+        
 
             grouping_decision = 'y'
 
