@@ -1,4 +1,0 @@
-Data-Set: 4
-Distance: euclidean
-Classifier: Neural Net
-SODA Granularity: 2.75
