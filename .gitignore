@@ -2,3 +2,5 @@
 
 *.csv
 Model/.ipynb_checkpoints/Model_Unified_Code-checkpoint.ipynb
+Model/IPython/.Kernel/ScatterPlot_PCA_45.png
+*.png
