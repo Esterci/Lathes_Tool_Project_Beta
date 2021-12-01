@@ -85,6 +85,7 @@ class verification_tool:
 
         import glob
         import numpy as np
+        import pickle as pkl
 
         # getting aquisition files
 
@@ -115,8 +116,11 @@ class verification_tool:
                 'text' : []
             }
 
-            data_dict[name]['data'] = np.genfromtxt(file,delimiter=',')
-            bar.update()
+            with open(file, "rb") as file_object:
+
+                data = pkl.load(data, file_object)
+
+            data_dict[name]['data'] =data
 
         self.data_dict = data_dict
 
@@ -311,11 +315,11 @@ class verification_tool:
         print('\nReports writen')
 
 
-    def time_stamp(self):
-        from datetime import datetime
-        dateTimeObj = datetime.now()
-        timestampStr = dateTimeObj.strftime("%d-%b-%Y-%H.%M.%S")
-        return timestampStr
+def time_stamp():
+    from datetime import datetime
+    dateTimeObj = datetime.now()
+    timestampStr = dateTimeObj.strftime("%d-%b-%Y-%H.%M.%S")
+    return timestampStr
 
 
 def int_to_bol(h,l):
