@@ -68,7 +68,7 @@ for i in range(num_time_series):
 
     spi_output = spi.xfer3(dummy_array)
 
-    spi_output = np.array(spi_output,dtype=np.unint8)
+    spi_output = np.array(spi_output,dtype=np.uint8)
 
     binary_data.append(spi_output)
 
@@ -94,11 +94,15 @@ binary_data = np.reshape (binary_data, (-1, 16))
 
 data = tools.transference_function(binary_data)
 
+# initializing verification tool
+
+v_tool = tools.verification_tool()
+
 # saving results
 
 filename = (
     'acquisition_files/' + 
-    tools.verification_tool.time_stamp() +
+    v_tool.time_stamp() +
     '__time_serie.pkl'
 )
 
