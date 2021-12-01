@@ -94,23 +94,18 @@ binary_data = np.reshape (binary_data, (-1, 16))
 
 data = tools.transference_function(binary_data)
 
-# initializing verification tool
-
-v_tool = tools.verification_tool()
 
 # saving results
 
 filename = (
     'acquisition_files/' + 
-    v_tool.time_stamp() +
+    tools.time_stamp() +
     '__time_serie.pkl'
 )
 
-fileObject = open(filename, 'wb')
+with open(filename, "wb") as file_object:
 
-pkl.dump(data, fileObject)
-
-fileObject.close()
+    pkl.dump(data, file_object)
 
 
 gpio.cleanup()
