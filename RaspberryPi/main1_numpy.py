@@ -65,7 +65,7 @@ for i in range(num_time_series):
 
     # creating empty array for establishing SPI communication
 
-    dummy_array = np.zeros((num_bytes))
+    dummy_array = np.zeros(num_bytes,dtype=int)
 
     spi_output = spi.xfer3(dummy_array)
 
