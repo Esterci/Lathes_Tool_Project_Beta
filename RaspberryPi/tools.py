@@ -118,7 +118,7 @@ class verification_tool:
 
             with open(file, "rb") as file_object:
 
-                data = pkl.load(data, file_object)
+                data = pkl.load(file_object)
 
             data_dict[name]['data'] = data
 

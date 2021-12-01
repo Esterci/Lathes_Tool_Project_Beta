@@ -45,9 +45,9 @@ spi.lsbfirst = False
 
 gpio.output(acquisition_command, gpio.HIGH)
 
-# creating list for receiving the data
+# creating a dictionary for receiving the data
 
-binary_data = []
+data_dict = {}
 
 # Initializing progress bar
 
@@ -75,7 +75,7 @@ for i in range(num_time_series):
 
     spi_output = np.array(spi_output,dtype=np.uint8)
 
-    binary_data.append(spi_output)
+    data_dict[i] = spi_output
     
     bar.message("data acquisition complete")
     
@@ -85,27 +85,43 @@ for i in range(num_time_series):
 
     bar.update()
 
-# formatting binary array
+# Initializing progress bar
 
-binary_data = np.array(binary_data)
+bar = tools.ProgBar(len(data_dict),'\nApplying tranference function')
 
-binary_data = np.reshape (binary_data, (-1, 16))
+for key in data_dict:
 
-# applying tranference_function
+    # formatting binary array
 
-data = tools.transference_function(binary_data)
+    binary_data = np.reshape (data_dict[key], (-1, 16))
+
+    # applying tranference_function
+
+    data = tools.transference_function(binary_data)
+
+    data_dict[key] = data
+
+    bar.update()
 
 
-# saving results
+# Initializing progress bar
 
-filename = (
-    'acquisition_files/' + 
-    tools.time_stamp() +
-    '__time_serie.pkl'
-)
+bar = tools.ProgBar(len(data_dict),'\nSaving Time Series')
 
-with open(filename, "wb") as file_object:
+for key in data_dict:
 
-    pkl.dump(data, file_object)
+    # saving results
+
+    filename = (
+        'acquisition_files/' + 
+        tools.time_stamp() +
+        '__time_serie.pkl'
+    )
+
+    with open(filename, "wb") as file_object:
+
+        pkl.dump(data_dict[key], file_object)
+
+    bar.update
 
 gpio.cleanup()
