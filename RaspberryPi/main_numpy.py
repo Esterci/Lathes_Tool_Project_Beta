@@ -8,6 +8,8 @@ from numpy import asarray
 from numpy import savetxt
 import RPi.GPIO as gpio
 
+ad = ads_numpy.AQ()
+
 #### User set variables
 
 spi_init_flag = 23
@@ -16,7 +18,7 @@ acquisition_command =27
 
 num_time_series = 2
 
-num_bytes = 28673
+num_bytes = 28672
 
 # cleaning residual state of the GPIO
 
@@ -65,9 +67,13 @@ for i in range(num_time_series):
 
     # creating empty array for establishing SPI communication
 
-    dummy_array = np.zeros(num_bytes,dtype=int)
+    dummy_array = [i for i in range(num_bytes)]
 
     spi_output = spi.xfer3(dummy_array)
+
+    spi_output = np.array(spi_output,dtype=np.unint8)
+
+    data.append(spi_output)
 
     print("time serie %d" % (i+1))
 
@@ -81,34 +87,37 @@ for i in range(num_time_series):
 
     gpio.output(acquisition_command, gpio.HIGH)
 
-"""
-else:
 
-    print (canal)
+data = np.array(data)
 
-    canal = np.reshape (canal, (-1, 16))
+data = np.reshape (data, (-1, 16))
 
-    savetxt(name, canal, fmt='%u', delimiter=',')
-    dim=np.array([])
-    dim= ad.dim_matrix(canal)
-    print (dim)
-    n=dim[0]
-    valor=np.empty([n,8], dtype = float)
-    a=0
-    for a in range (n):
-        b=0
-        for b in range (0,15,2):
-            hi=canal[a,b]
-            lo=canal[a,(b+1)]
-            c =(b/2)
-            c=round(c)
-            v=ad.int_to_bol(hi,lo)
-            valor[a,c]=v
-        a=a+1
-    name = ad.archive("Aquisicao.csv");
-    savetxt(name, valor, fmt='%f', delimiter=',')
-    canal=np.zeros((1,28672), dtype=np.uint8)
-    gpio.cleanup()
-"""
+#savetxt(name, data, fmt='%u', delimiter=',')
 
-    
+dim=np.array([])
+dim= data.shape
+print (dim)
+n=dim[0]
+valor=np.empty([n,8], dtype = float)
+a=0
+for a in range (n):
+    b=0
+    for b in range (0,15,2):
+
+        hi=data[a,b]
+
+        lo=data[a,(b+1)]
+
+        c =(b/2)
+
+        c=round(c)
+
+        v=ad.int_to_bol(hi,lo)
+
+        valor[a,c]=v
+    a=a+1
+
+print(type(valor))
+
+
+gpio.cleanup()
