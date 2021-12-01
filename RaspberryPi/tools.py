@@ -23,6 +23,7 @@ class ProgBar:
 
         sys.stdout.flush()
 
+
     def update(self,prog_info=None):
         
         import sys
@@ -59,6 +60,23 @@ class ProgBar:
             sys.stdout.write('[%s] %s' % (formated_bar,info))
 
             sys.stdout.flush()
+
+
+    def message(self,prog_info):
+        
+        import sys
+
+        percent = (self.progress)/self.n_elements * 100 / 2
+
+        info = '{:.2f}% - {:d} of {:d} '.format(percent*2,self.progress,self.n_elements) + prog_info
+
+        formated_bar = '-'* int (percent) + ' '*int(50-percent)
+
+        sys.stdout.write("\r")
+
+        sys.stdout.write('[%s] %s' % (formated_bar,info))
+
+        sys.stdout.flush()
 
 
 class verification_tool:
@@ -293,23 +311,51 @@ class verification_tool:
         print('\nReports writen')
 
 
+    def time_stamp(self):
+        from datetime import datetime
+        dateTimeObj = datetime.now()
+        timestampStr = dateTimeObj.strftime("%d-%b-%Y-%H.%M.%S")
+        return timestampStr
 
-# initializing verification tool
 
-tool = verification_tool('raw_aquisition/*')
+def int_to_bol(h,l):
 
-# checking ranges
+    W=(h*256)+l
 
-tool.range_check()
+    if W>32767:
 
-# ploting time series
+        W = W-65536      
 
-tool.plot_time_series()
+    valor= (W/32768)*10
 
-# ploting FFTs
+    return valor
 
-tool.plot_fft()
 
-# writing reports
+def transference_function(data):
 
-tool.write_report()
+    import numpy as np
+
+    dim = data.shape
+
+    n = dim[0]
+
+    valor = np.empty([n,8], dtype = float)
+
+    a = 0
+
+    for a in range (n):
+        b = 0
+        for b in range (0,15,2):
+
+            hi = data[a,b]
+
+            lo = data[a,(b+1)]
+
+            c = (b/2)
+
+            c = round(c)
+
+            v = int_to_bol(hi,lo)
+
+            valor[a,c] = v
+        a=a+1

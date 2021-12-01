@@ -1,12 +1,9 @@
 import spidev
-import time
 import ads_numpy
-import os
-import csv
 import numpy as np
-from numpy import asarray
-from numpy import savetxt
 import RPi.GPIO as gpio
+import tools
+import pickle as pkl
 
 ad = ads_numpy.AQ()
 
@@ -51,7 +48,7 @@ gpio.output(acquisition_command, gpio.HIGH)
 
 # creating list for receiving the data
 
-data = []
+binary_data = []
 
 for i in range(num_time_series):
 
@@ -73,7 +70,7 @@ for i in range(num_time_series):
 
     spi_output = np.array(spi_output,dtype=np.unint8)
 
-    data.append(spi_output)
+    binary_data.append(spi_output)
 
     print("time serie %d" % (i+1))
 
@@ -87,37 +84,29 @@ for i in range(num_time_series):
 
     gpio.output(acquisition_command, gpio.HIGH)
 
+# formatting binary array
 
-data = np.array(data)
+binary_data = np.array(binary_data)
 
-data = np.reshape (data, (-1, 16))
+binary_data = np.reshape (binary_data, (-1, 16))
 
-#savetxt(name, data, fmt='%u', delimiter=',')
+# applying tranference_function
 
-dim=np.array([])
-dim= data.shape
-print (dim)
-n=dim[0]
-valor=np.empty([n,8], dtype = float)
-a=0
-for a in range (n):
-    b=0
-    for b in range (0,15,2):
+data = tools.transference_function(binary_data)
 
-        hi=data[a,b]
+# saving results
 
-        lo=data[a,(b+1)]
+filename = (
+    'acquisition_files/' + 
+    tools.verification_tool.time_stamp() +
+    '__time_serie.pkl'
+)
 
-        c =(b/2)
+fileObject = open(filename, 'wb')
 
-        c=round(c)
+pkl.dump(data, fileObject)
 
-        v=ad.int_to_bol(hi,lo)
-
-        valor[a,c]=v
-    a=a+1
-
-print(type(valor))
+fileObject.close()
 
 
 gpio.cleanup()
