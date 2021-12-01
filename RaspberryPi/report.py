@@ -1,3 +1,5 @@
+
+
 class ProgBar:
 
     def __init__(self, n_elements,int_str):
@@ -80,7 +82,7 @@ class verification_tool:
 
         n_elements = len(file_list)
 
-        bar = ProgBar(n_elements,'\nReading data and converting binary data...')
+        bar = ProgBar(n_elements,'\nReading data and saving in the dictionary...')
 
         for file in file_list:
 
@@ -91,45 +93,11 @@ class verification_tool:
             # creating data and text keys
 
             data_dict[name] = {
-                'binary_data':0,
                 'data' : 0,
                 'text' : []
             }
 
-            # open binary file
-
-            file = open(file, "rb")
-
-            # reads content
-
-            ms_byte = file.read(1)
-
-            # convert binary values into bytes
-
-            data_byte = []
-
-            while ms_byte:
-
-                ls_byte = file.read(1) 
-                
-                ms_byte = int.from_bytes(ms_byte, "little")
-
-                ls_byte = int.from_bytes(ls_byte, "little")
-
-                # concatenate the 2 bytes for each channel
-                
-                byte = (ms_byte << 8)^ ls_byte
-                
-                data_byte.append(byte)
-
-                ms_byte = file.read(1)
-                
-            file.close()
-
-            # format the array
-
-            data_dict[name]['binary_data'] = np.array(data_byte).reshape(-1,8)
-
+            data_dict[name]['data'] = np.genfromtxt(file,delimiter=',')
             bar.update()
 
         self.data_dict = data_dict
@@ -323,6 +291,7 @@ class verification_tool:
                     file_object.write(txt)
 
         print('\nReports writen')
+
 
 
 # initializing verification tool
