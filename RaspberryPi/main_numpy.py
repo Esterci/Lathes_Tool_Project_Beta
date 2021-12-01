@@ -5,7 +5,9 @@ import RPi.GPIO as gpio
 import tools
 import pickle as pkl
 
-ad = ads_numpy.AQ()
+# cleaning residual state of the GPIO
+
+gpio.cleanup()
 
 #### User set variables
 
@@ -16,10 +18,6 @@ acquisition_command =27
 num_time_series = 2
 
 num_bytes = 28672
-
-# cleaning residual state of the GPIO
-
-gpio.cleanup()
 
 # setting comunication GPIOS
 
@@ -40,6 +38,7 @@ spi.threewire = False
 spi.cshigh = True
 spi.lsbfirst = False
 
+
 ### Acquisition routine
 
 # raspberry sends to STM32 the acquisition signal
@@ -50,6 +49,10 @@ gpio.output(acquisition_command, gpio.HIGH)
 
 binary_data = []
 
+# Initializing progress bar
+
+bar = tools.ProgBar(num_time_series,'\nAcquisition Process')
+
 for i in range(num_time_series):
 
     # waiting STM32 signal to start SPI communication
@@ -57,6 +60,8 @@ for i in range(num_time_series):
     while True:
         if gpio.event_detected(spi_init_flag):
             break
+
+    bar.message("start SPI communication received")
     
     # raspberry sends to STM32 the busy signal 
 
@@ -71,18 +76,14 @@ for i in range(num_time_series):
     spi_output = np.array(spi_output,dtype=np.uint8)
 
     binary_data.append(spi_output)
-
-    print("time serie %d" % (i+1))
-
-    print ("spi_output")
-
-    print(np.info(spi_output))
-
-    print(20*'=')
-
+    
+    bar.message("data acquisition complete")
+    
     # raspberry sends to STM32 the acquisition signal
 
     gpio.output(acquisition_command, gpio.HIGH)
+
+    bar.update()
 
 # formatting binary array
 
@@ -106,6 +107,5 @@ filename = (
 with open(filename, "wb") as file_object:
 
     pkl.dump(data, file_object)
-
 
 gpio.cleanup()

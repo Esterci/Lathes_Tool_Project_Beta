@@ -107,7 +107,7 @@ class verification_tool:
 
             # getting file name
 
-            name,_ = file.split('/')[-1].split('.')
+            name = file.split('/')[-1]
 
             # creating data and text keys
 
@@ -120,7 +120,7 @@ class verification_tool:
 
                 data = pkl.load(data, file_object)
 
-            data_dict[name]['data'] =data
+            data_dict[name]['data'] = data
 
         self.data_dict = data_dict
 
@@ -363,3 +363,5 @@ def transference_function(data):
 
             valor[a,c] = v
         a=a+1
+    
+    return valor
