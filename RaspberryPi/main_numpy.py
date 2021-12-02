@@ -32,7 +32,7 @@ gpio.add_event_detect(spi_init_flag, gpio.RISING)
 spi = spidev.SpiDev()
 spi.open(0, 0)
 spi.mode = 0b00
-spi.max_speed_hz = 10000000
+spi.max_speed_hz = int(250e6/32)
 spi.bits_per_word = 8
 spi.threewire = False
 spi.cshigh = True

@@ -345,10 +345,7 @@ def transference_function(data):
 
     valor = np.empty([n,8], dtype = float)
 
-    a = 0
-
     for a in range (n):
-        b = 0
         for b in range (0,15,2):
 
             hi = data[a,b]
@@ -362,6 +359,5 @@ def transference_function(data):
             v = int_to_bol(hi,lo)
 
             valor[a,c] = v
-        a=a+1
     
     return valor
