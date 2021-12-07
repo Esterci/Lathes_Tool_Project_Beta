@@ -112,17 +112,51 @@ class verification_tool:
             # creating data and text keys
 
             data_dict[name] = {
+                'binary_data':0,
                 'data' : 0,
                 'text' : []
             }
 
-            with open(file, "rb") as file_object:
+            # open binary file
 
-                data = pkl.load(file_object)
+            file = open(file, "rb")
 
-            data_dict[name]['data'] = data
+            # reads content
 
-        self.data_dict = data_dict
+            ms_byte = file.read(1)
+
+            # convert binary values into bytes
+
+            data_byte = []
+
+            while ms_byte:
+
+                ls_byte = file.read(1) 
+
+                ms_byte = int.from_bytes(ms_byte, "little")
+
+                ls_byte = int.from_bytes(ls_byte, "little")
+
+                # concatenate the 2 bytes for each channel
+
+                byte = (ms_byte << 8)^ ls_byte
+
+                data_byte.append(byte)
+
+                ms_byte = file.read(1)
+
+            file.close()
+
+            # format the array
+
+            data_byte = np.array(data_byte).reshape(-1,8)
+            data_dict[name]['binary_data'] = data_byte.copy()
+            data_dict[name]['data'] = ((data_byte-65536*(data_byte>32767))/32768)*10
+
+            bar.update()
+
+
+        self.data_dict = data_dict.copy()
 
         # ending progress bar
 
