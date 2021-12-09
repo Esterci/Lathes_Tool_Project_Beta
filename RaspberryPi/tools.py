@@ -215,7 +215,7 @@ class verification_tool:
 
         n_elements = len(self.data_dict)
 
-        bar = ProgBar(n_elements,'\nPloting time series...')
+        bar = ProgBar(n_elements*6,'\nPloting time series...')
 
         for file in self.data_dict:
 
@@ -243,6 +243,7 @@ class verification_tool:
                 ax.set_ylabel("V")
                 ax.grid()
                 ax.set_xlim(left=0, right=len(data))
+                ax.set_ylim((0,5))
 
                 plt.locator_params(axis='x', nbins=150)
                 plt.tight_layout()
@@ -251,9 +252,9 @@ class verification_tool:
 
                 plt.close('all')
 
-            #Updating progress bar
+                #Updating progress bar
 
-            bar.update()
+                bar.update()
     
         # ending progress bar
 
