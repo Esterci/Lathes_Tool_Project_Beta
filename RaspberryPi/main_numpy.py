@@ -1,9 +1,7 @@
 import spidev
-import ads_numpy
-import numpy as np
 import RPi.GPIO as gpio
 import tools
-import pickle as pkl
+import os
 
 # cleaning residual state of the GPIO
 
@@ -64,3 +62,31 @@ for i in range(num_time_series):
     gpio.output(acquisition_command, gpio.LOW)
 
     bar.update()
+
+input("Insert SD card and press ENTER")
+
+# removing previewous results
+
+os.remove("figures/*") 
+os.remove("resports/*") 
+
+# initializing verification tool
+
+tool = tools.verification_tool('acquisition_files/*')
+
+# checking ranges
+
+tool.range_check()
+
+# writing reports
+
+tool.write_report()
+
+# ploting time series
+
+tool.plot_time_series()
+
+# ploting FFTs
+
+tool.plot_fft()
+
