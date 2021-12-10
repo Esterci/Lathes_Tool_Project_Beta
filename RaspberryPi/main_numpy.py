@@ -1,4 +1,3 @@
-import spidev
 import RPi.GPIO as gpio
 import tools
 import os
@@ -24,17 +23,6 @@ gpio.setup(acquisition_command, gpio.OUT)
 gpio.output(acquisition_command, gpio.LOW)
 gpio.setup(spi_init_flag, gpio.IN, pull_up_down = gpio.PUD_DOWN)
 gpio.add_event_detect(spi_init_flag, gpio.RISING)
-
-# setting SPI parameters
-
-spi = spidev.SpiDev()
-spi.open(0, 0)
-spi.mode = 0b00
-spi.max_speed_hz = int(250e6/32)
-spi.bits_per_word = 8
-spi.threewire = False
-spi.cshigh = True
-spi.lsbfirst = False
 
 
 ### Acquisition routine
