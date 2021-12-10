@@ -41,19 +41,15 @@ spi.lsbfirst = False
 
 ### Acquisition routine
 
-# raspberry sends to STM32 the acquisition signal
-
-gpio.output(acquisition_command, gpio.HIGH)
-
-# creating a dictionary for receiving the data
-
-data_dict = {}
-
 # Initializing progress bar
 
 bar = tools.ProgBar(num_time_series,'\nAcquisition Process')
 
 for i in range(num_time_series):
+
+    # raspberry sends to STM32 the acquisition signal
+
+    gpio.output(acquisition_command, gpio.HIGH)
 
     # waiting STM32 signal to start SPI communication
 
@@ -67,61 +63,4 @@ for i in range(num_time_series):
 
     gpio.output(acquisition_command, gpio.LOW)
 
-    # creating empty array for establishing SPI communication
-
-    dummy_array = [i for i in range(num_bytes)]
-
-    spi_output = spi.xfer3(dummy_array)
-
-    spi_output = np.array(spi_output,dtype=np.uint8)
-
-    data_dict[i] = spi_output
-    
-    bar.message("data acquisition complete")
-    
-    # raspberry sends to STM32 the acquisition signal
-
-    gpio.output(acquisition_command, gpio.HIGH)
-
     bar.update()
-
-# Initializing progress bar
-
-bar = tools.ProgBar(len(data_dict),'\nApplying tranference function')
-
-for key in data_dict:
-
-    # formatting binary array
-
-    binary_data = np.reshape (data_dict[key], (-1, 16))
-
-    # applying tranference_function
-
-    data = tools.transference_function(binary_data)
-
-    data_dict[key] = data
-
-    bar.update()
-
-
-# Initializing progress bar
-
-bar = tools.ProgBar(len(data_dict),'\nSaving Time Series')
-
-for key in data_dict:
-
-    # saving results
-
-    filename = (
-        'acquisition_files/' + 
-        tools.time_stamp() +
-        '__time_serie.pkl'
-    )
-
-    with open(filename, "wb") as file_object:
-
-        pkl.dump(data_dict[key], file_object)
-
-    bar.update
-
-gpio.cleanup()
