@@ -232,7 +232,7 @@ class verification_tool:
 
                 fig, ax = plt.subplots(1,1)
                 
-                fig.set_size_inches(320,9)
+                fig.set_size_inches(16,9)
 
                 signal = data[:,i]
 
@@ -245,7 +245,7 @@ class verification_tool:
                 ax.set_xlim(left=0, right=len(data))
                 ax.set_ylim((0,5))
 
-                plt.locator_params(axis='x', nbins=150)
+                #plt.locator_params(axis='x', nbins=150)
                 plt.tight_layout()
 
                 fig.savefig('figures/' + file + '__' + sen + '.jpg',format='jpg')
