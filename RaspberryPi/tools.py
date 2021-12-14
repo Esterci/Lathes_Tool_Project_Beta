@@ -79,17 +79,44 @@ class ProgBar:
         sys.stdout.flush()
 
 
-class verification_tool:
+class acquistion_tool:
 
     def __init__(self,folder):
 
+        self.sd_path = folder
+
+
+    def time_stamp(self):
+        from datetime import datetime
+        dateTimeObj = datetime.now()
+        timestampStr = dateTimeObj.strftime("%d-%b-%Y-%H.%M.%S")
+        return timestampStr
+
+
+    def get_file(self):
+
+        import shutil
+        import glob
+
+        file_list = glob.glob(self.sd_path)
+
+        for file in file_list:
+
+            file_name = 'acquisition_files/' + self.time_stamp() + '.txt'
+
+            shutil.move(file, file_name)
+            
+
+class verification_tool:
+
+    def __init__(self):
+
         import glob
         import numpy as np
-        import pickle as pkl
 
         # getting aquisition files
 
-        file_list = glob.glob(folder)
+        file_list = glob.glob('acquisition_files/*')
 
         # creating data dictionary
 
@@ -208,8 +235,9 @@ class verification_tool:
 
     def plot_time_series(self):
 
-        import numpy as np 
         import matplotlib.pyplot as plt
+        import glob
+        import numpy as np
 
         # Initializing progress bar
 
@@ -226,31 +254,39 @@ class verification_tool:
                 'canal_3','canal_4','canal_5'
                     ]
 
+            # list existing figures
+
+            file_list = glob.glob('figures/*')
+
             args = np.linspace(0,len(data)-1,num=len(data),dtype=int)
 
             for i,sen in enumerate(sensors):
 
-                fig, ax = plt.subplots(1,1)
-                
-                fig.set_size_inches(16,9)
+                file_name = 'figures/' + file + '__' + sen + '.jpg'
 
-                signal = data[:,i]
+                if not file_name in file_list:
 
-                ax.plot(args, signal, 
-                        ms=5, linestyle='-')
+                    fig, ax = plt.subplots(1,1)
+                    
+                    fig.set_size_inches(16,9)
 
-                ax.set_title(sen)
-                ax.set_ylabel("V")
-                ax.grid()
-                ax.set_xlim(left=0, right=len(data))
-                ax.set_ylim((0,5))
+                    signal = data[:,i]
 
-                #plt.locator_params(axis='x', nbins=150)
-                plt.tight_layout()
+                    ax.plot(args, signal, 
+                            ms=5, linestyle='-')
 
-                fig.savefig('figures/' + file + '__' + sen + '.jpg',format='jpg')
+                    ax.set_title(sen)
+                    ax.set_ylabel("V")
+                    ax.grid()
+                    ax.set_xlim(left=0, right=len(data))
+                    ax.set_ylim((0,5))
 
-                plt.close('all')
+                    #plt.locator_params(axis='x', nbins=150)
+                    plt.tight_layout()
+
+                    fig.savefig(file_name,format='jpg')
+
+                    plt.close('all')
 
                 #Updating progress bar
 
@@ -266,6 +302,7 @@ class verification_tool:
         import numpy as np 
         import matplotlib.pyplot as plt
         import scipy.fftpack
+        import glob
 
         # Initializing progress bar
 
@@ -286,31 +323,41 @@ class verification_tool:
             fig = plt.figure(figsize=(13,13))
             ax = fig.subplots(3,2)
 
-            # Iteração sobre os arquivos (cada canal do AD)
+            # list existing figures
 
-            for i, sen in enumerate(sensors):
+            file_list = glob.glob('figures/*')
 
-                # Number of samplepoints
+            # defining file name 
 
-                N_ni = int(data.shape[0])
+            file_name = 'figures/FFT__' + file + '.jpg'
 
-                # sample spacing
+            if not file_name in file_list:
 
-                fs = 12e3 # Frequencia de amostragem
-                T = 1.0/fs 
-                x = np.linspace(0.0, N_ni*T, N_ni)
-                yf = scipy.fftpack.fft(data[:N_ni,i] - data[:N_ni,i].mean())
-                xf = np.linspace(0.0, 1.0/(2.0*T), N_ni//2)
+                # Iteração sobre os arquivos (cada canal do AD)
 
-                ax[i%3,i//3].set_title(sen, fontsize=15)
-                ax[i%3,i//3].plot(xf, 2.0/N_ni * np.abs(yf[:N_ni//2]), label='National Instruments')
-                ax[i%3,i//3].legend()
+                for i, sen in enumerate(sensors):
 
-                plt.tight_layout()
+                    # Number of samplepoints
 
-            fig.savefig('figures/FFT__' + file + '.jpg',format='jpg')
+                    N_ni = int(data.shape[0])
 
-            plt.close('all')
+                    # sample spacing
+
+                    fs = 12e3 # Frequencia de amostragem
+                    T = 1.0/fs 
+                    x = np.linspace(0.0, N_ni*T, N_ni)
+                    yf = scipy.fftpack.fft(data[:N_ni,i] - data[:N_ni,i].mean())
+                    xf = np.linspace(0.0, 1.0/(2.0*T), N_ni//2)
+
+                    ax[i%3,i//3].set_title(sen, fontsize=15)
+                    ax[i%3,i//3].plot(xf, 2.0/N_ni * np.abs(yf[:N_ni//2]), label='National Instruments')
+                    ax[i%3,i//3].legend()
+
+                    plt.tight_layout()
+
+                fig.savefig(file_name,format='jpg')
+
+                plt.close('all')
 
             #Updating progress bar
 
@@ -323,29 +370,42 @@ class verification_tool:
 
     def write_report(self):
 
+        import glob
+
+        # list existing reports
+
+        file_list = glob.glob('reports/*')
+    
         ### Saving results in a txt file 
 
         for file in self.data_dict:
-            
-            # appending text
+        
 
-            for txt in self.data_dict[file]['text']:
+            # defining file name 
 
-                # Open the file in append & read mode ('a+')
+            file_name = 'reports/' + file + '__report.txt'
 
-                with open('reports/' + file + '__report.txt', "a+") as file_object:
+            if not file_name in file_list:
 
-                    # Move read cursor to the start of file.
-                    file_object.seek(0)
+                # appending text
 
-                    # If file is not empty then append '\n'
-                    data = file_object.read(100)
+                for txt in self.data_dict[file]['text']:
 
-                    if len(data) > 0 :
-                        file_object.write("\n")
-                        
-                    # Append text at the end of file
-                    file_object.write(txt)
+                    # Open the file in append & read mode ('a+')
+
+                    with open(file_name, "a+") as file_object:
+
+                        # Move read cursor to the start of file.
+                        file_object.seek(0)
+
+                        # If file is not empty then append '\n'
+                        data = file_object.read(100)
+
+                        if len(data) > 0 :
+                            file_object.write("\n")
+                            
+                        # Append text at the end of file
+                        file_object.write(txt)
 
         print('\nReports writen')
 

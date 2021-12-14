@@ -2,7 +2,7 @@ import tools
 
 # initializing verification tool
 
-tool = tools.verification_tool('acquisition_files/*')
+tool = tools.verification_tool()
 
 # checking ranges
 

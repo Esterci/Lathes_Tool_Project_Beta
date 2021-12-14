@@ -1,6 +1,5 @@
 import RPi.GPIO as gpio
 import tools
-import os
 
 # cleaning residual state of the GPIO
 
@@ -51,30 +50,11 @@ for i in range(num_time_series):
 
     bar.update()
 
-input("Insert SD card and press ENTER")
 
-# removing previewous results
-
-os.remove("figures/*") 
-os.remove("resports/*") 
+input("\n\nInsert SD card and press ENTER")
 
 # initializing verification tool
 
-tool = tools.verification_tool('acquisition_files/*')
+tool = tools.acquistion_tool('/media/thiago/STM_storage/*')
 
-# checking ranges
-
-tool.range_check()
-
-# writing reports
-
-tool.write_report()
-
-# ploting time series
-
-tool.plot_time_series()
-
-# ploting FFTs
-
-tool.plot_fft()
-
+tool.get_file()
