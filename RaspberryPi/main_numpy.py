@@ -1,5 +1,7 @@
 import RPi.GPIO as gpio
 import tools
+import time
+import numpy as np
 
 # cleaning residual state of the GPIO
 
@@ -30,7 +32,11 @@ gpio.add_event_detect(spi_init_flag, gpio.RISING)
 
 bar = tools.ProgBar(num_time_series,'\nAcquisition Process')
 
+time_list = []
+
 for i in range(num_time_series):
+
+    start = time.time()
 
     # raspberry sends to STM32 the acquisition signal
 
@@ -50,6 +56,14 @@ for i in range(num_time_series):
 
     bar.update()
 
+    end = time.time()
+
+    time_list.append(end - start)
+
+mean_time = np.mean(time_list)
+std_time = np.std(time_list)
+
+print("{:.6e} +- {:.6e}".format(mean_time,std_time))
 
 input("\n\nInsert SD card and press ENTER")
 
