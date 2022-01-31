@@ -8,3 +8,5 @@ Model/.ipynb_checkpoints/Model_Unified_Code-checkpoint.ipynb
 *.png
 *.npy
 RaspberryPi/Model/Grouping_Analyses/*.txt
+*.pkl
+*.zip
