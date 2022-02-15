@@ -1,7 +1,5 @@
 
 import numpy as np
-import pandas as pd
-from lathes_model import LathesModel, Lathes_train_test_split
 import pickle
 import glob
 import SODA
@@ -13,7 +11,7 @@ file_list.sort()
 
 file_list = file_list[33:]
 
-gra_list = [2,4,6]
+gra_list = [2.25,2.5,3.25,3.5]
 
 for ii in range(int(len(file_list)/66)):
 
