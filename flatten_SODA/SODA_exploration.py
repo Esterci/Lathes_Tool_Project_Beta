@@ -6,14 +6,12 @@ import SODA
 import time
 
 
-file_list = glob.glob("/media/thiago/ANGELICA/data_divisions/*")
+file_list = glob.glob("data_divisions/*")
 file_list.sort()
 
-file_list = file_list[33:]
+gra_list = [2.5,2.6,2.7]
 
-gra_list = [2.25,2.5,3.25,3.5]
-
-for ii in range(int(len(file_list)/66)):
+for ii in range(int(len(file_list)/33)):
 
     for gra in gra_list:
 
@@ -37,7 +35,9 @@ for ii in range(int(len(file_list)/66)):
                                                                                            gra,
                                                                                            (j+1)))
 
-            target_name = '/media/thiago/ANGELICA/data_divisions/target__' + '__'.join(file.split('__')[1:])
+            aux = (file.split('__'))
+
+            target_name = "targets/target__" + '__'.join(aux[1:])
 
             target = pickle.load(open(target_name, "rb"))
 
