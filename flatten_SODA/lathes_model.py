@@ -33,7 +33,7 @@ class LathesModel(object):
         Number of components to keep in PCA.
     clf: classifier, default=MLPClassifier
         sklearn binary classifier
-    n_jobs: int, default=4
+    n_jobs: int, default=4'
         The number of processes to use for parallelization in tsfresh
     granularity: float, default=3
         SODA granularity, sensibility factor for data partitioning module
